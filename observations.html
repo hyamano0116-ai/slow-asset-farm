@@ -3,164 +3,178 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>観察一覧 | SlowFarm DB</title>
+  <title>観察記録 | 農的ストックDB</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <a href="index.html" class="logo">🌱 SlowFarm DB</a>
-    <nav>
-      <ul>
-        <li><a href="index.html">ダッシュボード</a></li>
-        <li><a href="hypotheses.html">仮説</a></li>
-        <li><a href="observations.html" class="active">観察</a></li>
-      </ul>
-    </nav>
-  </header>
 
-  <main>
-    <div class="page-header">
-      <div>
-        <h1>観察一覧</h1>
-        <p class="subtitle" id="count"></p>
-      </div>
-      <button class="btn btn-primary" onclick="openModal()">＋ 新規観察</button>
+<nav class="nav">
+  <a href="index.html" class="nav__logo">&#x1F33F; 農的ストックDB</a>
+  <div class="nav__links">
+    <a href="index.html" class="nav__link">ホーム</a>
+    <a href="hypotheses.html" class="nav__link">仮説一覧</a>
+    <a href="observations.html" class="nav__link nav__link--active">観察記録</a>
+  </div>
+</nav>
+
+<div class="container page">
+  <div class="page-header">
+    <div>
+      <h1>観察記録</h1>
+      <p class="page-subtitle">フィールドで気づいたことをその場で記録する</p>
     </div>
+    <button class="btn btn--primary" id="btnAdd">＋ 新規記録</button>
+  </div>
 
-    <div class="filter-bar" id="filterBar"></div>
-    <div class="grid" id="list"></div>
-  </main>
+  <div class="filter-bar">
+    <select id="filterHyp" class="form-control" style="width:auto">
+      <option value="">全仮説</option>
+    </select>
+    <input type="month" id="filterMonth" class="form-control" style="width:auto">
+    <span class="filter-count" id="filterCount"></span>
+  </div>
 
-  <div class="modal-overlay" id="modal">
-    <div class="modal">
-      <h2>新規観察を追加</h2>
-      <form id="form" onsubmit="save(event)">
+  <div style="display:flex;flex-direction:column;gap:0.75rem" id="list"></div>
+</div>
+
+<!-- 新規記録モーダル -->
+<div class="modal-overlay" id="modalOverlay" hidden>
+  <div class="modal">
+    <div class="modal__header">
+      <h2>観察記録を追加</h2>
+      <button class="modal__close" id="btnClose">&times;</button>
+    </div>
+    <div class="modal__body">
+      <form id="obsForm">
         <div class="form-group">
-          <label>タイトル *</label>
-          <input type="text" name="title" required placeholder="例: 直売所の販売状況視察">
-        </div>
-        <div class="form-group">
-          <label>内容</label>
-          <textarea name="content" placeholder="観察した内容を詳しく記録する"></textarea>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
-          <div class="form-group">
-            <label>日付</label>
-            <input type="date" name="date">
-          </div>
-          <div class="form-group">
-            <label>場所</label>
-            <input type="text" name="location" placeholder="例: 自宅庭">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>タグ（カンマ区切り）</label>
-          <input type="text" name="tags" placeholder="例: 柿, 直売所, 価格調査">
-        </div>
-        <div class="form-group">
-          <label>関連仮説</label>
-          <select name="hypothesisId" id="hypSelect">
+          <label class="form-label">関連仮説</label>
+          <select name="hypothesisId" id="hypSelect" class="form-control">
             <option value="">なし</option>
           </select>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
-          <button type="submit" class="btn btn-primary">追加する</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+          <div class="form-group">
+            <label class="form-label">日付 *</label>
+            <input type="date" name="date" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">場所</label>
+            <input type="text" name="location" class="form-control" placeholder="例: 北斜面・標高920m">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">タイトル *</label>
+          <input type="text" name="title" class="form-control" required placeholder="例: 珠芽の発根確認">
+        </div>
+        <div class="form-group">
+          <label class="form-label">内容</label>
+          <textarea name="content" class="form-control" rows="4" placeholder="観察したこと、測定値、気づきなどを記録"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">タグ（カンマ区切り）</label>
+          <input type="text" name="tags" class="form-control" placeholder="例: 珠芽, 発根確認">
         </div>
       </form>
     </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" id="btnCancel">キャンセル</button>
+      <button class="btn btn--primary" id="btnSave">保存する</button>
+    </div>
   </div>
+</div>
 
-  <script>
-    const DB = {
-      get: k => JSON.parse(localStorage.getItem(k) || '[]'),
-      set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
-    };
-    const KEYS = { h: 'saf_hypotheses', o: 'saf_observations' };
-    let currentHypFilter = 'all';
+<script src="data.js"></script>
+<script>
+var KEYS = { H:'saf_hypotheses', O:'saf_observations', INIT:'saf_initialized' };
+function getH() { return JSON.parse(localStorage.getItem(KEYS.H)||'[]'); }
+function getO() { return JSON.parse(localStorage.getItem(KEYS.O)||'[]'); }
+function saveO(d) { localStorage.setItem(KEYS.O, JSON.stringify(d)); }
+if (!localStorage.getItem(KEYS.INIT)) {
+  localStorage.setItem(KEYS.H, JSON.stringify(SAF_DATA.hypotheses));
+  localStorage.setItem(KEYS.O, JSON.stringify(SAF_DATA.observations));
+  localStorage.setItem(KEYS.INIT,'1');
+}
 
-    function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function genId() { return 'o'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
 
-    function setHypFilter(hid, el) {
-      currentHypFilter = hid;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      el.classList.add('active');
-      render();
-    }
+function buildFilterOptions() {
+  var hs = getH();
+  var sel = document.getElementById('filterHyp');
+  sel.innerHTML = '<option value="">全仮説</option>'
+    +hs.map(function(h){return '<option value="'+h.id+'">'+h.title+'</option>';}).join('');
+}
 
-    function render() {
-      const hyps = DB.get(KEYS.h);
-      let obs = DB.get(KEYS.o).sort((a, b) => b.date.localeCompare(a.date));
-      if (currentHypFilter !== 'all') obs = obs.filter(o => o.hypothesisId === (currentHypFilter || null) || (currentHypFilter === '' && !o.hypothesisId));
+function buildHypOptions() {
+  var hs = getH();
+  document.getElementById('hypSelect').innerHTML = '<option value="">なし</option>'
+    +hs.map(function(h){return '<option value="'+h.id+'">'+h.title+'</option>';}).join('');
+}
 
-      document.getElementById('filterBar').innerHTML =
-        '<button class="filter-btn ' + (currentHypFilter==='all'?'active':'') + '" onclick="setHypFilter(\'all\', this)">すべて</button>' +
-        '<button class="filter-btn ' + (currentHypFilter===''?'active':'') + '" onclick="setHypFilter(\'\', this)">未紐付け</button>' +
-        hyps.map(h => '<button class="filter-btn ' + (currentHypFilter===h.id?'active':'') + '" onclick="setHypFilter(\'' + h.id + '\', this)">' + h.title.slice(0,12) + '…</button>').join('');
+function render() {
+  var hypId = document.getElementById('filterHyp').value;
+  var month = document.getElementById('filterMonth').value;
+  var hs = getH();
+  var os = getO().sort(function(a,b){return b.date.localeCompare(a.date);});
+  if (hypId) os = os.filter(function(o){return o.hypothesisId===hypId;});
+  if (month) os = os.filter(function(o){return o.date&&o.date.startsWith(month);});
+  document.getElementById('filterCount').textContent = os.length+'件';
+  document.getElementById('list').innerHTML = os.length
+    ? os.map(function(o) {
+        var h = hs.find(function(x){return x.id===o.hypothesisId;});
+        return '<div class="obs-card">'
+          +'<div class="obs-card__date-loc"><span>'+(o.date||'')+'</span><span>&middot;</span><span>'+(o.location||'')+'</span></div>'
+          +'<div class="obs-card__title">'+o.title+'</div>'
+          +'<div class="obs-card__content">'+(o.content||'')+'</div>'
+          +(h?'<a href="hypothesis-detail.html?id='+h.id+'" class="obs-card__hyp-link">&rarr; '+h.title+'</a>':'')
+          +'<div class="badges mt-1">'+(o.tags||[]).map(function(t){return '<span class="badge badge--tag">'+t+'</span>';}).join('')+'</div>'
+          +'</div>';
+      }).join('')
+    : '<div class="empty">観察記録がありません。「＋ 新規記録」から追加できます。</div>';
+}
 
-      document.getElementById('count').textContent = obs.length + '件';
-      document.getElementById('list').innerHTML = obs.length
-        ? obs.map(o => {
-            const linkedHyp = hyps.find(h => h.id === o.hypothesisId);
-            return '<div class="card"><div class="card-header"><span class="card-title">' + o.title + '</span></div><div class="card-meta">' + o.date + ' · ' + o.location + '</div>' +
-              (linkedHyp ? '<div style="margin-top:0.4rem"><a href="hypothesis-detail.html?id=' + linkedHyp.id + '" style="font-size:0.8rem;color:var(--green);text-decoration:none">→ ' + linkedHyp.title.slice(0,25) + '…</a></div>' : '') +
-              '<div class="card-body">' + o.content.slice(0,100) + (o.content.length>100?'…':'') + '</div>' +
-              '<div class="tags">' + o.tags.map(t=>'<span class="tag">'+t+'</span>').join('') + '</div>' +
-              '<div style="margin-top:0.75rem;text-align:right"><button class="btn btn-secondary btn-sm" onclick="deleteObs(\'' + o.id + \')">削除</button></div></div>';
-          }).join('')
-        : '<div class="empty" style="grid-column:1/-1">観察がありません</div>';
-    }
+function openModal() {
+  buildHypOptions();
+  document.getElementById('obsForm').reset();
+  document.querySelector('[name="date"]').valueAsDate = new Date();
+  document.getElementById('modalOverlay').removeAttribute('hidden');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').setAttribute('hidden','');
+}
 
-    function openModal() {
-      document.getElementById('modal').classList.add('open');
-      document.getElementById('form').reset();
-      document.querySelector('[name="date"]').valueAsDate = new Date();
-      const hyps = DB.get(KEYS.h);
-      document.getElementById('hypSelect').innerHTML = '<option value="">なし</option>' + hyps.map(h => '<option value="' + h.id + '">' + h.title + '</option>').join('');
-    }
+document.getElementById('btnAdd').addEventListener('click', openModal);
+document.getElementById('btnClose').addEventListener('click', closeModal);
+document.getElementById('btnCancel').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', function(e){
+  if (e.target===e.currentTarget) closeModal();
+});
 
-    function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('btnSave').addEventListener('click', function(){
+  var form = document.getElementById('obsForm');
+  if (!form.reportValidity()) return;
+  var fd = new FormData(form);
+  var ob = {
+    id: genId(),
+    hypothesisId: fd.get('hypothesisId')||null,
+    date: fd.get('date'),
+    location: fd.get('location'),
+    title: fd.get('title'),
+    content: fd.get('content'),
+    tags: fd.get('tags').split(',').map(function(t){return t.trim();}).filter(Boolean),
+    createdAt: new Date().toISOString()
+  };
+  var all = getO();
+  all.unshift(ob);
+  saveO(all);
+  closeModal();
+  render();
+});
 
-    function save(e) {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const hypId = fd.get('hypothesisId') || null;
-      const obs = {
-        id: genId(),
-        title: fd.get('title'),
-        content: fd.get('content'),
-        date: fd.get('date'),
-        location: fd.get('location'),
-        tags: fd.get('tags').split(',').map(t=>t.trim()).filter(Boolean),
-        hypothesisId: hypId
-      };
-      const all = DB.get(KEYS.o);
-      all.unshift(obs);
-      DB.set(KEYS.o, all);
-      if (hypId) {
-        const hyps = DB.get(KEYS.h);
-        const idx = hyps.findIndex(h => h.id === hypId);
-        if (idx >= 0) {
-          hyps[idx].observationIds = [...(hyps[idx].observationIds || []), obs.id];
-          DB.set(KEYS.h, hyps);
-        }
-      }
-      closeModal();
-      render();
-    }
-
-    function deleteObs(oid) {
-      if (!confirm('この観察を削除しますか？')) return;
-      DB.set(KEYS.o, DB.get(KEYS.o).filter(o => o.id !== oid));
-      DB.set(KEYS.h, DB.get(KEYS.h).map(h => ({ ...h, observationIds: (h.observationIds||[]).filter(id => id !== oid) })));
-      render();
-    }
-
-    document.getElementById('modal').addEventListener('click', e => {
-      if (e.target === e.currentTarget) closeModal();
-    });
-
-    render();
-  </script>
+['filterHyp','filterMonth'].forEach(function(id){
+  document.getElementById(id).addEventListener('change', render);
+});
+buildFilterOptions();
+render();
+</script>
 </body>
 </html>
