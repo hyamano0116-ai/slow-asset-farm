@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ダッシュボード | SlowFarm DB</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">🌱 SlowFarm DB</a>
+    <nav>
+      <ul>
+        <li><a href="index.html" class="active">ダッシュボード</a></li>
+        <li><a href="hypotheses.html">仮説</a></li>
+        <li><a href="observations.html">観察</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <h1>ダッシュボード</h1>
+        <p class="subtitle">農的ストックビジネス仮説データベース</p>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="section">
+      <h2>仮説ステータス分布</h2>
+      <div class="status-chart" id="statusChart"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2>最新の仮説</h2>
+        <a href="hypotheses.html" class="btn btn-secondary btn-sm">すべて表示</a>
+      </div>
+      <div id="recentHypotheses"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <h2>最新の観察</h2>
+        <a href="observations.html" class="btn btn-secondary btn-sm">すべて表示</a>
+      </div>
+      <div id="recentObservations"></div>
+    </div>
+  </main>
+
+  <script>
+    const DB = {
+      get: k => JSON.parse(localStorage.getItem(k) || '[]'),
+      set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+    };
+    const KEYS = { h: 'saf_hypotheses', o: 'saf_observations' };
+
+    function seedIfEmpty() {
+      if (DB.get(KEYS.h).length > 0) return;
+      DB.set(KEYS.h, [
+        { id: 'h1', title: '木の実販売で年間30万円の収益が見込める', description: '庭木の果実（柿・梅・栗）を直売所やネット販売することで安定収益が得られる', category: '収益性', status: '検証中', confidence: 3, evidence: '近隣農家の直売所を視察。柿は1袋200円で週末に30袋販売しているのを確認', createdAt: '2026-04-01T00:00:00.000Z', observationIds: ['o1', 'o2'] },
+        { id: 'h2', title: '腐葉土販売は初期投資なしで始められる', description: '落ち葉と有機廃棄物から腐葉土を作り、家庭菜園ユーザーへ販売する', category: '運営', status: '支持', confidence: 4, evidence: '1袋5Lを300円で販売。原材料費ほぼゼロ。月10袋=3000円のキャッシュフロー確認', createdAt: '2026-03-15T00:00:00.000Z', observationIds: ['o3'] },
+        { id: 'h3', title: 'サブスク型野菜BOXは継続率が高い', description: '月次サブスクで季節野菜BOXを届けることで安定した顧客基盤を作れる', category: '市場性', status: '保留', confidence: 2, evidence: '知人3人に試験提供。継続意向あり2人、なし1人', createdAt: '2026-04-20T00:00:00.000Z', observationIds: [] }
+      ]);
+      DB.set(KEYS.o, [
+        { id: 'o1', title: '直売所の柿販売状況視察', content: '土曜午前に農産物直売所を訪問。柿1袋（5個入り）200円が開店1時間で完売。出品者は高齢女性で木1本分を毎週出荷しているとのこと。', date: '2026-04-05', location: '市農産物直売所', tags: ['柿', '直売所', '価格調査'], hypothesisId: 'h1' },
+        { id: 'o2', title: 'メルカリ農産物相場確認', content: '梅1kgが送料込み700-900円で取引されている。無農薬表記があると1200円まで上がる。レビュー評価が重要。', date: '2026-04-10', location: 'オンライン（メルカリ）', tags: ['梅', 'オンライン', '価格調査'], hypothesisId: 'h1' },
+        { id: 'o3', title: '腐葉土の熟成期間テスト', content: '落ち葉を積んで3ヶ月後に確認。十分に腐熟していた。米ぬか追加で分解が早まることを確認。', date: '2026-03-20', location: '自宅庭', tags: ['腐葉土', '生産テスト'], hypothesisId: 'h2' }
+      ]);
+    }
+
+    function confidenceHTML(n) {
+      return '<span class="confidence">' + [1,2,3,4,5].map(i => '<span class="confidence-dot ' + (i<=n?'filled':'') + '"></span>').join('') + '</span>';
+    }
+
+    function render() {
+      seedIfEmpty();
+      const hyps = DB.get(KEYS.h);
+      const obs = DB.get(KEYS.o);
+      const supported = hyps.filter(h => h.status === '支持').length;
+
+      document.getElementById('statsGrid').innerHTML =
+        '<div class="stat-card"><div class="stat-value">' + hyps.length + '</div><div class="stat-label">仮説</div></div>' +
+        '<div class="stat-card"><div class="stat-value">' + obs.length + '</div><div class="stat-label">観察</div></div>' +
+        '<div class="stat-card"><div class="stat-value">' + (hyps.length ? Math.round(supported/hyps.length*100) : 0) + '%</div><div class="stat-label">支持率</div></div>' +
+        '<div class="stat-card"><div class="stat-value">' + hyps.filter(h=>h.status==='検証中').length + '</div><div class="stat-label">検証中</div></div>';
+
+      const statuses = ['検証中', '支持', '棄却', '保留'];
+      const total = hyps.length || 1;
+      document.getElementById('statusChart').innerHTML = statuses.map(s => {
+        const count = hyps.filter(h => h.status === s).length;
+        const pct = Math.round(count / total * 100);
+        return '<div class="status-bar-item"><div class="status-bar-count">' + count + '</div><div class="status-bar"><div class="status-bar-fill fill-' + s + '" style="width:' + pct + '%"></div></div><div class="status-bar-label">' + s + '</div></div>';
+      }).join('');
+
+      const recentH = [...hyps].sort((a,b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 5);
+      document.getElementById('recentHypotheses').innerHTML = recentH.length
+        ? '<div class="grid">' + recentH.map(h =>
+            '<a href="hypothesis-detail.html?id=' + h.id + '" class="card card-link"><div class="card-header"><span class="card-title">' + h.title + '</span><span class="badge badge-' + h.status + '">' + h.status + '</span></div><div class="card-meta" style="display:flex;gap:0.5rem;align-items:center;margin-top:0.4rem"><span class="badge badge-' + h.category + '">' + h.category + '</span>' + confidenceHTML(h.confidence) + '</div></a>'
+          ).join('') + '</div>'
+        : '<div class="empty">仮説はまだありません</div>';
+
+      const recentO = [...obs].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 5);
+      document.getElementById('recentObservations').innerHTML = recentO.length
+        ? '<div class="grid">' + recentO.map(o =>
+            '<div class="card"><div class="card-header"><span class="card-title">' + o.title + '</span></div><div class="card-meta">' + o.date + ' · ' + o.location + '</div><div class="tags">' + o.tags.map(t => '<span class="tag">' + t + '</span>').join('') + '</div></div>'
+          ).join('') + '</div>'
+        : '<div class="empty">観察はまだありません</div>';
+    }
+
+    render();
+  </script>
+</body>
+</html>

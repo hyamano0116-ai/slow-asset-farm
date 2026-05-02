@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>仮説詳細 | SlowFarm DB</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">🌱 SlowFarm DB</a>
+    <nav>
+      <ul>
+        <li><a href="index.html">ダッシュボード</a></li>
+        <li><a href="hypotheses.html" class="active">仮説</a></li>
+        <li><a href="observations.html">観察</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <a href="hypotheses.html" class="back-link">← 仮説一覧</a>
+    <div id="content"></div>
+  </main>
+
+  <script>
+    const DB = {
+      get: k => JSON.parse(localStorage.getItem(k) || '[]'),
+      set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+    };
+    const KEYS = { h: 'saf_hypotheses', o: 'saf_observations' };
+    const id = new URLSearchParams(location.search).get('id');
+
+    function confidenceHTML(n) {
+      return '<span class="confidence">' + [1,2,3,4,5].map(i => '<span class="confidence-dot ' + (i<=n?'filled':'') + '"></span>').join('') + '</span>';
+    }
+
+    function renderView() {
+      const hyps = DB.get(KEYS.h);
+      const h = hyps.find(x => x.id === id);
+      if (!h) { document.getElementById('content').innerHTML = '<div class="empty">仮説が見つかりません</div>'; return; }
+
+      const allObs = DB.get(KEYS.o);
+      const relatedObs = allObs.filter(o => (h.observationIds || []).includes(o.id));
+
+      document.title = h.title + ' | SlowFarm DB';
+      document.getElementById('content').innerHTML =
+        '<div class="page-header"><div><div class="detail-meta"><span class="badge badge-' + h.status + '">' + h.status + '</span><span class="badge badge-' + h.category + '">' + h.category + '</span>' + confidenceHTML(h.confidence) + '</div><h1>' + h.title + '</h1><p class="subtitle">' + h.createdAt.slice(0,10).replace(/-/g,'/') + '</p></div><div style="display:flex;gap:0.5rem"><button class="btn btn-secondary" onclick="renderEdit()">編集</button><button class="btn btn-danger" onclick="deleteHyp()">削除</button></div></div>' +
+        '<div class="section">' +
+        (h.description ? '<div class="detail-field"><div class="detail-field-label">説明</div><div class="detail-field-value">' + h.description + '</div></div>' : '') +
+        (h.evidence ? '<div class="detail-field"><div class="detail-field-label">根拠・証拠</div><div class="detail-field-value">' + h.evidence + '</div></div>' : '') +
+        '</div>' +
+        '<div class="section"><div class="section-header"><h2>関連観察 (' + relatedObs.length + '件)</h2><button class="btn btn-secondary btn-sm" onclick="openLinkModal()">観察を紐付け</button></div>' +
+        (relatedObs.length
+          ? '<div class="grid">' + relatedObs.map(o =>
+              '<div class="card"><div class="card-header"><span class="card-title">' + o.title + '</span></div><div class="card-meta">' + o.date + ' · ' + o.location + '</div><div class="card-body">' + o.content.slice(0,100) + (o.content.length>100?'…':'') + '</div><div class="tags" style="margin-top:0.5rem">' + o.tags.map(t=>'<span class="tag">'+t+'</span>').join('') + '</div></div>'
+            ).join('') + '</div>'
+          : '<div class="empty">関連する観察がありません</div>') +
+        '</div>';
+
+      if (!document.getElementById('linkModal')) {
+        document.body.insertAdjacentHTML('beforeend',
+          '<div class="modal-overlay" id="linkModal"><div class="modal"><h2>観察を紐付け</h2><div id="obsCheckList" style="max-height:300px;overflow-y:auto"></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeLinkModal()">キャンセル</button><button class="btn btn-primary" onclick="saveLinks()">保存</button></div></div></div>'
+        );
+        document.getElementById('linkModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeLinkModal(); });
+      }
+      renderObsChecklist();
+    }
+
+    function renderEdit() {
+      const hyps = DB.get(KEYS.h);
+      const h = hyps.find(x => x.id === id);
+      if (!h) return;
+      document.getElementById('content').innerHTML =
+        '<h1 style="margin-bottom:1.5rem">仮説を編集</h1>' +
+        '<form onsubmit="saveEdit(event)">' +
+        '<div class="form-group"><label>タイトル *</label><input type="text" name="title" value="' + h.title.replace(/"/g,'&quot;') + '" required></div>' +
+        '<div class="form-group"><label>説明</label><textarea name="description">' + (h.description||'') + '</textarea></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">' +
+        '<div class="form-group"><label>カテゴリ</label><select name="category">' + ['収益性','持続性','市場性','運営'].map(c=>'<option'+(h.category===c?' selected':'')+'>'+c+'</option>').join('') + '</select></div>' +
+        '<div class="form-group"><label>ステータス</label><select name="status">' + ['検証中','支持','棄却','保留'].map(s=>'<option'+(h.status===s?' selected':'')+'>'+s+'</option>').join('') + '</select></div>' +
+        '</div>' +
+        '<div class="form-group"><label>確信度 (1-5)</label><input type="range" name="confidence" min="1" max="5" value="' + h.confidence + '" style="width:100%"></div>' +
+        '<div class="form-group"><label>根拠・証拠</label><textarea name="evidence">' + (h.evidence||'') + '</textarea></div>' +
+        '<div style="display:flex;gap:0.5rem;margin-top:1.5rem"><button type="button" class="btn btn-secondary" onclick="renderView()">キャンセル</button><button type="submit" class="btn btn-primary">保存する</button></div>' +
+        '</form>';
+    }
+
+    function saveEdit(e) {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const hyps = DB.get(KEYS.h);
+      const idx = hyps.findIndex(x => x.id === id);
+      if (idx < 0) return;
+      hyps[idx] = { ...hyps[idx], title: fd.get('title'), description: fd.get('description'), category: fd.get('category'), status: fd.get('status'), confidence: parseInt(fd.get('confidence')), evidence: fd.get('evidence') };
+      DB.set(KEYS.h, hyps);
+      renderView();
+    }
+
+    function deleteHyp() {
+      if (!confirm('この仮説を削除しますか？')) return;
+      DB.set(KEYS.h, DB.get(KEYS.h).filter(x => x.id !== id));
+      location.href = 'hypotheses.html';
+    }
+
+    function openLinkModal() { document.getElementById('linkModal').classList.add('open'); }
+    function closeLinkModal() { document.getElementById('linkModal').classList.remove('open'); }
+
+    function renderObsChecklist() {
+      const h = DB.get(KEYS.h).find(x => x.id === id);
+      if (!h) return;
+      const linked = h.observationIds || [];
+      const allObs = DB.get(KEYS.o);
+      document.getElementById('obsCheckList').innerHTML = allObs.length
+        ? allObs.map(o =>
+            '<label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border-bottom:1px solid var(--beige-dark);cursor:pointer"><input type="checkbox" name="obs" value="' + o.id + '"' + (linked.includes(o.id)?' checked':'') + '><span><strong>' + o.title + '</strong> <span style="color:var(--muted);font-size:0.8rem">' + o.date + '</span></span></label>'
+          ).join('')
+        : '<div class="empty">観察がありません</div>';
+    }
+
+    function saveLinks() {
+      const checked = [...document.querySelectorAll('#obsCheckList input:checked')].map(c => c.value);
+      const hyps = DB.get(KEYS.h);
+      const idx = hyps.findIndex(x => x.id === id);
+      if (idx < 0) return;
+      hyps[idx].observationIds = checked;
+      DB.set(KEYS.h, hyps);
+      const obs = DB.get(KEYS.o).map(o => ({ ...o, hypothesisId: checked.includes(o.id) ? id : (o.hypothesisId === id ? null : o.hypothesisId) }));
+      DB.set(KEYS.o, obs);
+      closeLinkModal();
+      renderView();
+    }
+
+    renderView();
+  </script>
+</body>
+</html>

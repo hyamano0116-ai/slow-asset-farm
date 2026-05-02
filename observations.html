@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>観察一覧 | SlowFarm DB</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">🌱 SlowFarm DB</a>
+    <nav>
+      <ul>
+        <li><a href="index.html">ダッシュボード</a></li>
+        <li><a href="hypotheses.html">仮説</a></li>
+        <li><a href="observations.html" class="active">観察</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <h1>観察一覧</h1>
+        <p class="subtitle" id="count"></p>
+      </div>
+      <button class="btn btn-primary" onclick="openModal()">＋ 新規観察</button>
+    </div>
+
+    <div class="filter-bar" id="filterBar"></div>
+    <div class="grid" id="list"></div>
+  </main>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2>新規観察を追加</h2>
+      <form id="form" onsubmit="save(event)">
+        <div class="form-group">
+          <label>タイトル *</label>
+          <input type="text" name="title" required placeholder="例: 直売所の販売状況視察">
+        </div>
+        <div class="form-group">
+          <label>内容</label>
+          <textarea name="content" placeholder="観察した内容を詳しく記録する"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+          <div class="form-group">
+            <label>日付</label>
+            <input type="date" name="date">
+          </div>
+          <div class="form-group">
+            <label>場所</label>
+            <input type="text" name="location" placeholder="例: 自宅庭">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>タグ（カンマ区切り）</label>
+          <input type="text" name="tags" placeholder="例: 柿, 直売所, 価格調査">
+        </div>
+        <div class="form-group">
+          <label>関連仮説</label>
+          <select name="hypothesisId" id="hypSelect">
+            <option value="">なし</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+          <button type="submit" class="btn btn-primary">追加する</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const DB = {
+      get: k => JSON.parse(localStorage.getItem(k) || '[]'),
+      set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+    };
+    const KEYS = { h: 'saf_hypotheses', o: 'saf_observations' };
+    let currentHypFilter = 'all';
+
+    function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+    function setHypFilter(hid, el) {
+      currentHypFilter = hid;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      render();
+    }
+
+    function render() {
+      const hyps = DB.get(KEYS.h);
+      let obs = DB.get(KEYS.o).sort((a, b) => b.date.localeCompare(a.date));
+      if (currentHypFilter !== 'all') obs = obs.filter(o => o.hypothesisId === (currentHypFilter || null) || (currentHypFilter === '' && !o.hypothesisId));
+
+      document.getElementById('filterBar').innerHTML =
+        '<button class="filter-btn ' + (currentHypFilter==='all'?'active':'') + '" onclick="setHypFilter(\'all\', this)">すべて</button>' +
+        '<button class="filter-btn ' + (currentHypFilter===''?'active':'') + '" onclick="setHypFilter(\'\', this)">未紐付け</button>' +
+        hyps.map(h => '<button class="filter-btn ' + (currentHypFilter===h.id?'active':'') + '" onclick="setHypFilter(\'' + h.id + '\', this)">' + h.title.slice(0,12) + '…</button>').join('');
+
+      document.getElementById('count').textContent = obs.length + '件';
+      document.getElementById('list').innerHTML = obs.length
+        ? obs.map(o => {
+            const linkedHyp = hyps.find(h => h.id === o.hypothesisId);
+            return '<div class="card"><div class="card-header"><span class="card-title">' + o.title + '</span></div><div class="card-meta">' + o.date + ' · ' + o.location + '</div>' +
+              (linkedHyp ? '<div style="margin-top:0.4rem"><a href="hypothesis-detail.html?id=' + linkedHyp.id + '" style="font-size:0.8rem;color:var(--green);text-decoration:none">→ ' + linkedHyp.title.slice(0,25) + '…</a></div>' : '') +
+              '<div class="card-body">' + o.content.slice(0,100) + (o.content.length>100?'…':'') + '</div>' +
+              '<div class="tags">' + o.tags.map(t=>'<span class="tag">'+t+'</span>').join('') + '</div>' +
+              '<div style="margin-top:0.75rem;text-align:right"><button class="btn btn-secondary btn-sm" onclick="deleteObs(\'' + o.id + \')">削除</button></div></div>';
+          }).join('')
+        : '<div class="empty" style="grid-column:1/-1">観察がありません</div>';
+    }
+
+    function openModal() {
+      document.getElementById('modal').classList.add('open');
+      document.getElementById('form').reset();
+      document.querySelector('[name="date"]').valueAsDate = new Date();
+      const hyps = DB.get(KEYS.h);
+      document.getElementById('hypSelect').innerHTML = '<option value="">なし</option>' + hyps.map(h => '<option value="' + h.id + '">' + h.title + '</option>').join('');
+    }
+
+    function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+    function save(e) {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const hypId = fd.get('hypothesisId') || null;
+      const obs = {
+        id: genId(),
+        title: fd.get('title'),
+        content: fd.get('content'),
+        date: fd.get('date'),
+        location: fd.get('location'),
+        tags: fd.get('tags').split(',').map(t=>t.trim()).filter(Boolean),
+        hypothesisId: hypId
+      };
+      const all = DB.get(KEYS.o);
+      all.unshift(obs);
+      DB.set(KEYS.o, all);
+      if (hypId) {
+        const hyps = DB.get(KEYS.h);
+        const idx = hyps.findIndex(h => h.id === hypId);
+        if (idx >= 0) {
+          hyps[idx].observationIds = [...(hyps[idx].observationIds || []), obs.id];
+          DB.set(KEYS.h, hyps);
+        }
+      }
+      closeModal();
+      render();
+    }
+
+    function deleteObs(oid) {
+      if (!confirm('この観察を削除しますか？')) return;
+      DB.set(KEYS.o, DB.get(KEYS.o).filter(o => o.id !== oid));
+      DB.set(KEYS.h, DB.get(KEYS.h).map(h => ({ ...h, observationIds: (h.observationIds||[]).filter(id => id !== oid) })));
+      render();
+    }
+
+    document.getElementById('modal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+
+    render();
+  </script>
+</body>
+</html>

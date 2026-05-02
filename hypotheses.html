@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>仮説一覧 | SlowFarm DB</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">🌱 SlowFarm DB</a>
+    <nav>
+      <ul>
+        <li><a href="index.html">ダッシュボード</a></li>
+        <li><a href="hypotheses.html" class="active">仮説</a></li>
+        <li><a href="observations.html">観察</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <h1>仮説一覧</h1>
+        <p class="subtitle" id="count"></p>
+      </div>
+      <button class="btn btn-primary" onclick="openModal()">＋ 新規仮説</button>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">すべて</button>
+      <button class="filter-btn" data-filter="検証中" onclick="setFilter('検証中', this)">検証中</button>
+      <button class="filter-btn" data-filter="支持" onclick="setFilter('支持', this)">支持</button>
+      <button class="filter-btn" data-filter="棄却" onclick="setFilter('棄却', this)">棄却</button>
+      <button class="filter-btn" data-filter="保留" onclick="setFilter('保留', this)">保留</button>
+      <span style="width:1px;background:var(--beige-dark);margin:0 0.25rem"></span>
+      <button class="filter-btn" data-cat="収益性" onclick="setCat('収益性', this)">収益性</button>
+      <button class="filter-btn" data-cat="持続性" onclick="setCat('持続性', this)">持続性</button>
+      <button class="filter-btn" data-cat="市場性" onclick="setCat('市場性', this)">市場性</button>
+      <button class="filter-btn" data-cat="運営" onclick="setCat('運営', this)">運営</button>
+    </div>
+
+    <div class="grid" id="list"></div>
+  </main>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2>新規仮説を追加</h2>
+      <form id="form" onsubmit="save(event)">
+        <div class="form-group">
+          <label>仮説タイトル *</label>
+          <input type="text" name="title" required placeholder="例: ○○することで△△が得られる">
+        </div>
+        <div class="form-group">
+          <label>詳細説明</label>
+          <textarea name="description" placeholder="仮説の背景・根拠・検証方法など"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+          <div class="form-group">
+            <label>カテゴリ</label>
+            <select name="category">
+              <option>収益性</option><option>持続性</option><option>市場性</option><option>運営</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>ステータス</label>
+            <select name="status">
+              <option>検証中</option><option>支持</option><option>棄却</option><option>保留</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>確信度 (1-5)</label>
+          <input type="range" name="confidence" min="1" max="5" value="3" style="width:100%">
+        </div>
+        <div class="form-group">
+          <label>根拠・証拠</label>
+          <textarea name="evidence" placeholder="観察・データ・インタビューなど"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+          <button type="submit" class="btn btn-primary">追加する</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const DB = {
+      get: k => JSON.parse(localStorage.getItem(k) || '[]'),
+      set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+    };
+    const KEYS = { h: 'saf_hypotheses', o: 'saf_observations' };
+    let currentFilter = 'all', currentCat = 'all';
+
+    function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+    function confidenceHTML(n) {
+      return '<span class="confidence">' + [1,2,3,4,5].map(i => '<span class="confidence-dot ' + (i<=n?'filled':'') + '"></span>').join('') + '</span>';
+    }
+
+    function setFilter(f, el) {
+      currentFilter = f;
+      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      render();
+    }
+
+    function setCat(c, el) {
+      currentCat = currentCat === c ? 'all' : c;
+      document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('active'));
+      if (currentCat !== 'all') el.classList.add('active');
+      render();
+    }
+
+    function render() {
+      let hyps = DB.get(KEYS.h);
+      if (currentFilter !== 'all') hyps = hyps.filter(h => h.status === currentFilter);
+      if (currentCat !== 'all') hyps = hyps.filter(h => h.category === currentCat);
+      hyps = hyps.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+      document.getElementById('count').textContent = hyps.length + '件';
+      document.getElementById('list').innerHTML = hyps.length
+        ? hyps.map(h =>
+            '<a href="hypothesis-detail.html?id=' + h.id + '" class="card card-link"><div class="card-header"><span class="card-title">' + h.title + '</span><span class="badge badge-' + h.status + '">' + h.status + '</span></div><div class="card-meta" style="display:flex;gap:0.5rem;align-items:center;margin-top:0.4rem"><span class="badge badge-' + h.category + '">' + h.category + '</span>' + confidenceHTML(h.confidence) + '<span style="color:var(--muted);font-size:0.8rem">' + (h.observationIds ? h.observationIds.length : 0) + '件の観察</span></div>' + (h.description ? '<div class="card-body">' + h.description.slice(0, 80) + (h.description.length > 80 ? '…' : '') + '</div>' : '') + '</a>'
+          ).join('')
+        : '<div class="empty" style="grid-column:1/-1">条件に一致する仮説がありません</div>';
+    }
+
+    function openModal() {
+      document.getElementById('modal').classList.add('open');
+      document.getElementById('form').reset();
+    }
+
+    function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+    function save(e) {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const hyp = {
+        id: genId(),
+        title: fd.get('title'),
+        description: fd.get('description'),
+        category: fd.get('category'),
+        status: fd.get('status'),
+        confidence: parseInt(fd.get('confidence')),
+        evidence: fd.get('evidence'),
+        createdAt: new Date().toISOString(),
+        observationIds: []
+      };
+      const hyps = DB.get(KEYS.h);
+      hyps.unshift(hyp);
+      DB.set(KEYS.h, hyps);
+      closeModal();
+      render();
+    }
+
+    document.getElementById('modal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+
+    render();
+  </script>
+</body>
+</html>
