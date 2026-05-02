@@ -3,114 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ダッシュボード | SlowFarm DB</title>
+  <title>農的ストックビジネス仮説DB</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <a href="index.html" class="logo">🌱 SlowFarm DB</a>
-    <nav>
-      <ul>
-        <li><a href="index.html" class="active">ダッシュボード</a></li>
-        <li><a href="hypotheses.html">仮説</a></li>
-        <li><a href="observations.html">観察</a></li>
-      </ul>
-    </nav>
-  </header>
 
-  <main>
-    <div class="page-header">
-      <div>
-        <h1>ダッシュボード</h1>
-        <p class="subtitle">農的ストックビジネス仮説データベース</p>
-      </div>
+<nav class="nav">
+  <span class="nav__logo">&#x1F33F; 農的ストックDB</span>
+  <div class="nav__links">
+    <a href="index.html" class="nav__link nav__link--active">ホーム</a>
+    <a href="hypotheses.html" class="nav__link">仮説一覧</a>
+    <a href="observations.html" class="nav__link">観察記録</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <p class="hero__eyebrow">山梨高冷地 フィールドジャーナル</p>
+  <h1 class="hero__title">田舎 &times; 時間 &times; 農業の再編集<br>= ストック資産</h1>
+  <p class="hero__sub">待つこと、観察すること、比較すること、記録すること。そのすべてが、商品になり、体験になり、教育になり、毎年積み上がる。</p>
+</div>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<div class="container page">
+
+  <div class="section">
+    <div class="section__header">
+      <span class="section__title">注目の仮説 TOP3</span>
+      <a href="hypotheses.html" class="section__link">すべて見る &rarr;</a>
     </div>
+    <div class="grid-3" id="top3"></div>
+  </div>
 
-    <div class="stats-grid" id="statsGrid"></div>
-
-    <div class="section">
-      <h2>仮説ステータス分布</h2>
-      <div class="status-chart" id="statusChart"></div>
+  <div class="section">
+    <div class="section__header">
+      <span class="section__title">カテゴリ別マップ</span>
     </div>
+    <div class="cat-map" id="catMap"></div>
+  </div>
 
-    <div class="section">
-      <div class="section-header">
-        <h2>最新の仮説</h2>
-        <a href="hypotheses.html" class="btn btn-secondary btn-sm">すべて表示</a>
-      </div>
-      <div id="recentHypotheses"></div>
+  <div class="section">
+    <div class="section__header">
+      <span class="section__title">最新の観察記録</span>
+      <a href="observations.html" class="section__link">すべて見る &rarr;</a>
     </div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem" id="recentObs"></div>
+  </div>
 
-    <div class="section">
-      <div class="section-header">
-        <h2>最新の観察</h2>
-        <a href="observations.html" class="btn btn-secondary btn-sm">すべて表示</a>
-      </div>
-      <div id="recentObservations"></div>
-    </div>
-  </main>
+</div>
 
-  <script>
-    const DB = {
-      get: k => JSON.parse(localStorage.getItem(k) || '[]'),
-      set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
-    };
-    const KEYS = { h: 'saf_hypotheses', o: 'saf_observations' };
+<script src="data.js"></script>
+<script>
+var KEYS = { H:'saf_hypotheses', O:'saf_observations', INIT:'saf_initialized' };
+function getH() { return JSON.parse(localStorage.getItem(KEYS.H)||'[]'); }
+function getO() { return JSON.parse(localStorage.getItem(KEYS.O)||'[]'); }
+if (!localStorage.getItem(KEYS.INIT)) {
+  localStorage.setItem(KEYS.H, JSON.stringify(SAF_DATA.hypotheses));
+  localStorage.setItem(KEYS.O, JSON.stringify(SAF_DATA.observations));
+  localStorage.setItem(KEYS.INIT,'1');
+}
 
-    function seedIfEmpty() {
-      if (DB.get(KEYS.h).length > 0) return;
-      DB.set(KEYS.h, [
-        { id: 'h1', title: '木の実販売で年間30万円の収益が見込める', description: '庭木の果実（柿・梅・栗）を直売所やネット販売することで安定収益が得られる', category: '収益性', status: '検証中', confidence: 3, evidence: '近隣農家の直売所を視察。柿は1袋200円で週末に30袋販売しているのを確認', createdAt: '2026-04-01T00:00:00.000Z', observationIds: ['o1', 'o2'] },
-        { id: 'h2', title: '腐葉土販売は初期投資なしで始められる', description: '落ち葉と有機廃棄物から腐葉土を作り、家庭菜園ユーザーへ販売する', category: '運営', status: '支持', confidence: 4, evidence: '1袋5Lを300円で販売。原材料費ほぼゼロ。月10袋=3000円のキャッシュフロー確認', createdAt: '2026-03-15T00:00:00.000Z', observationIds: ['o3'] },
-        { id: 'h3', title: 'サブスク型野菜BOXは継続率が高い', description: '月次サブスクで季節野菜BOXを届けることで安定した顧客基盤を作れる', category: '市場性', status: '保留', confidence: 2, evidence: '知人3人に試験提供。継続意向あり2人、なし1人', createdAt: '2026-04-20T00:00:00.000Z', observationIds: [] }
-      ]);
-      DB.set(KEYS.o, [
-        { id: 'o1', title: '直売所の柿販売状況視察', content: '土曜午前に農産物直売所を訪問。柿1袋（5個入り）200円が開店1時間で完売。出品者は高齢女性で木1本分を毎週出荷しているとのこと。', date: '2026-04-05', location: '市農産物直売所', tags: ['柿', '直売所', '価格調査'], hypothesisId: 'h1' },
-        { id: 'o2', title: 'メルカリ農産物相場確認', content: '梅1kgが送料込み700-900円で取引されている。無農薬表記があると1200円まで上がる。レビュー評価が重要。', date: '2026-04-10', location: 'オンライン（メルカリ）', tags: ['梅', 'オンライン', '価格調査'], hypothesisId: 'h1' },
-        { id: 'o3', title: '腐葉土の熟成期間テスト', content: '落ち葉を積んで3ヶ月後に確認。十分に腐熟していた。米ぬか追加で分解が早まることを確認。', date: '2026-03-20', location: '自宅庭', tags: ['腐葉土', '生産テスト'], hypothesisId: 'h2' }
-      ]);
-    }
+function totalScore(h) { return Object.values(h.scores).reduce(function(s,v){return s+v;},0); }
 
-    function confidenceHTML(n) {
-      return '<span class="confidence">' + [1,2,3,4,5].map(i => '<span class="confidence-dot ' + (i<=n?'filled':'') + '"></span>').join('') + '</span>';
-    }
+var CAT_ICON = {'希少植物・生薬作物':'&#x1F33F;','土づくり':'&#x1F31E;','家庭菜園':'&#x1F966;'};
+var STATUS_CLS = {'検証前':'badge--pre','検証中':'badge--verif','支持':'badge--sup','棄却':'badge--rej','継続観察':'badge--cont'};
+function badge(s) { return '<span class="badge '+(STATUS_CLS[s]||'badge--pre')+'">'+ s +'</span>'; }
 
-    function render() {
-      seedIfEmpty();
-      const hyps = DB.get(KEYS.h);
-      const obs = DB.get(KEYS.o);
-      const supported = hyps.filter(h => h.status === '支持').length;
+function stat(n, label) {
+  return '<div class="stat-item"><span class="stat-item__number">'+n+'</span><span class="stat-item__label">'+label+'</span></div>';
+}
 
-      document.getElementById('statsGrid').innerHTML =
-        '<div class="stat-card"><div class="stat-value">' + hyps.length + '</div><div class="stat-label">仮説</div></div>' +
-        '<div class="stat-card"><div class="stat-value">' + obs.length + '</div><div class="stat-label">観察</div></div>' +
-        '<div class="stat-card"><div class="stat-value">' + (hyps.length ? Math.round(supported/hyps.length*100) : 0) + '%</div><div class="stat-label">支持率</div></div>' +
-        '<div class="stat-card"><div class="stat-value">' + hyps.filter(h=>h.status==='検証中').length + '</div><div class="stat-label">検証中</div></div>';
+var TOP_SCORES = [
+  ['時間価値','timeValue','v'],
+  ['希少性','rarity','v'],
+  ['ストック性','stockability','b']
+];
+function miniBar(label, val, t) {
+  return '<div class="mini-score">'
+    +'<span class="mini-score__label">'+label+'</span>'
+    +'<div class="mini-score__bar"><div class="mini-score__fill fill--'+t+'" style="width:'+(val/5*100)+'%"></div></div>'
+    +'<span class="mini-score__val">'+val+'</span></div>';
+}
 
-      const statuses = ['検証中', '支持', '棄却', '保留'];
-      const total = hyps.length || 1;
-      document.getElementById('statusChart').innerHTML = statuses.map(s => {
-        const count = hyps.filter(h => h.status === s).length;
-        const pct = Math.round(count / total * 100);
-        return '<div class="status-bar-item"><div class="status-bar-count">' + count + '</div><div class="status-bar"><div class="status-bar-fill fill-' + s + '" style="width:' + pct + '%"></div></div><div class="status-bar-label">' + s + '</div></div>';
-      }).join('');
+function renderStats() {
+  var hs=getH(), os=getO();
+  document.getElementById('statsBar').innerHTML =
+    stat(hs.length,'仮説数')+stat(os.length,'観察数')+
+    stat(hs.filter(function(h){return h.status==='検証中';}).length,'検証中')+
+    stat(hs.filter(function(h){return h.scores.priority>=4;}).length,'高優先');
+}
 
-      const recentH = [...hyps].sort((a,b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 5);
-      document.getElementById('recentHypotheses').innerHTML = recentH.length
-        ? '<div class="grid">' + recentH.map(h =>
-            '<a href="hypothesis-detail.html?id=' + h.id + '" class="card card-link"><div class="card-header"><span class="card-title">' + h.title + '</span><span class="badge badge-' + h.status + '">' + h.status + '</span></div><div class="card-meta" style="display:flex;gap:0.5rem;align-items:center;margin-top:0.4rem"><span class="badge badge-' + h.category + '">' + h.category + '</span>' + confidenceHTML(h.confidence) + '</div></a>'
-          ).join('') + '</div>'
-        : '<div class="empty">仮説はまだありません</div>';
+function renderTop3() {
+  var hs=getH();
+  var top3=[].concat(hs).sort(function(a,b){return totalScore(b)-totalScore(a);}).slice(0,3);
+  document.getElementById('top3').innerHTML = top3.map(function(h) {
+    var ts=totalScore(h), icon=CAT_ICON[h.category]||'&#x1F331;';
+    return '<a href="hypothesis-detail.html?id='+h.id+'" class="card card--link">'
+      +'<div class="card__img">'+icon+'</div>'
+      +'<div class="card__body">'
+      +'<div class="card__meta">'+badge(h.status)+'<span class="badge badge--cat">'+h.category+'</span></div>'
+      +'<div class="card__title">'+h.title+'</div>'
+      +'<div class="mini-scores" style="margin-top:0.5rem">'
+      +TOP_SCORES.map(function(x){return miniBar(x[0],h.scores[x[1]],x[2]);}).join('')
+      +'</div></div>'
+      +'<div class="card__footer">'
+      +'<div class="badges">'+h.monetizationPaths.slice(0,2).map(function(p){return '<span class="badge badge--path">'+p+'</span>';}).join('')+'</div>'
+      +'<span style="font-size:0.8rem;font-weight:700;color:var(--accent)">'+ts+'<span style="opacity:0.5;font-weight:400">/70</span></span>'
+      +'</div></a>';
+  }).join('');
+}
 
-      const recentO = [...obs].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 5);
-      document.getElementById('recentObservations').innerHTML = recentO.length
-        ? '<div class="grid">' + recentO.map(o =>
-            '<div class="card"><div class="card-header"><span class="card-title">' + o.title + '</span></div><div class="card-meta">' + o.date + ' · ' + o.location + '</div><div class="tags">' + o.tags.map(t => '<span class="tag">' + t + '</span>').join('') + '</div></div>'
-          ).join('') + '</div>'
-        : '<div class="empty">観察はまだありません</div>';
-    }
+function renderCatMap() {
+  var hs=getH(), cats={};
+  hs.forEach(function(h){ cats[h.category]=(cats[h.category]||0)+1; });
+  var max=Math.max.apply(null,Object.values(cats).concat([1]));
+  document.getElementById('catMap').innerHTML = Object.entries(cats).map(function(e) {
+    return '<div class="cat-map__item">'
+      +'<span style="font-size:1.4rem">'+(CAT_ICON[e[0]]||'&#x1F331;')+'</span>'
+      +'<span class="cat-map__name">'+e[0]+'</span>'
+      +'<div class="cat-map__bar"><div class="cat-map__fill" style="width:'+(e[1]/max*100).toFixed(0)+'%"></div></div>'
+      +'<span class="cat-map__count">'+e[1]+'件</span></div>';
+  }).join('');
+}
 
-    render();
-  </script>
+function renderRecentObs() {
+  var os=getO(), hs=getH();
+  var recent=[].concat(os).sort(function(a,b){return b.date.localeCompare(a.date);}).slice(0,3);
+  document.getElementById('recentObs').innerHTML = recent.length
+    ? recent.map(function(o) {
+        var h=hs.find(function(x){return x.id===o.hypothesisId;});
+        return '<div class="obs-card">'
+          +'<div class="obs-card__date-loc"><span>'+o.date+'</span><span>&middot;</span><span>'+o.location+'</span></div>'
+          +'<div class="obs-card__title">'+o.title+'</div>'
+          +'<div class="obs-card__content">'+o.content+'</div>'
+          +(h?'<a href="hypothesis-detail.html?id='+h.id+'" class="obs-card__hyp-link">&rarr; '+h.title+'</a>':'')
+          +'<div class="badges mt-1">'+o.tags.map(function(t){return '<span class="badge badge--tag">'+t+'</span>';}).join('')+'</div>'
+          +'</div>';
+      }).join('')
+    : '<div class="empty">観察記録がありません</div>';
+}
+
+renderStats(); renderTop3(); renderCatMap(); renderRecentObs();
+</script>
 </body>
 </html>
