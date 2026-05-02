@@ -3,135 +3,152 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>仮説詳細 | SlowFarm DB</title>
+  <title>仮説詳細 | 農的ストックDB</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <a href="index.html" class="logo">🌱 SlowFarm DB</a>
-    <nav>
-      <ul>
-        <li><a href="index.html">ダッシュボード</a></li>
-        <li><a href="hypotheses.html" class="active">仮説</a></li>
-        <li><a href="observations.html">観察</a></li>
-      </ul>
-    </nav>
-  </header>
 
-  <main>
-    <a href="hypotheses.html" class="back-link">← 仮説一覧</a>
-    <div id="content"></div>
-  </main>
+<nav class="nav">
+  <a href="index.html" class="nav__logo">&#x1F33F; 農的ストックDB</a>
+  <div class="nav__links">
+    <a href="index.html" class="nav__link">ホーム</a>
+    <a href="hypotheses.html" class="nav__link nav__link--active">仮説一覧</a>
+    <a href="observations.html" class="nav__link">観察記録</a>
+  </div>
+</nav>
 
-  <script>
-    const DB = {
-      get: k => JSON.parse(localStorage.getItem(k) || '[]'),
-      set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
-    };
-    const KEYS = { h: 'saf_hypotheses', o: 'saf_observations' };
-    const id = new URLSearchParams(location.search).get('id');
+<div id="root"></div>
 
-    function confidenceHTML(n) {
-      return '<span class="confidence">' + [1,2,3,4,5].map(i => '<span class="confidence-dot ' + (i<=n?'filled':'') + '"></span>').join('') + '</span>';
+<script src="data.js"></script>
+<script>
+var KEYS = { H:'saf_hypotheses', O:'saf_observations', INIT:'saf_initialized' };
+function getH() { return JSON.parse(localStorage.getItem(KEYS.H)||'[]'); }
+function getO() { return JSON.parse(localStorage.getItem(KEYS.O)||'[]'); }
+if (!localStorage.getItem(KEYS.INIT)) {
+  localStorage.setItem(KEYS.H, JSON.stringify(SAF_DATA.hypotheses));
+  localStorage.setItem(KEYS.O, JSON.stringify(SAF_DATA.observations));
+  localStorage.setItem(KEYS.INIT,'1');
+}
+
+var id = new URLSearchParams(location.search).get('id');
+var h = getH().find(function(x){return x.id===id;});
+
+if (!h) {
+  document.getElementById('root').innerHTML =
+    '<div class="container"><div class="empty" style="padding-top:3rem">'
+    +'仮説が見つかりません <a href="hypotheses.html">戻る</a></div></div>';
+} else {
+  document.title = h.title + ' | 農的ストックDB';
+
+  function totalScore(h) { return Object.values(h.scores).reduce(function(s,v){return s+v;},0); }
+
+  var STATUS_CLS = {'検証前':'badge--pre','検証中':'badge--verif','支持':'badge--sup','棄却':'badge--rej','継続観察':'badge--cont'};
+  var CAT_ICON = {'希少植物・生薬作物':'&#x1F33F;','土づくり':'&#x1F31E;','家庭菜園':'&#x1F966;'};
+
+  // 14項目スコアグループ定義
+  var GROUPS = [
+    {
+      key:'v',
+      title:'価値スコア（6項目 / 満点30点）',
+      items:[['時間価値','timeValue'],['田舎価値','ruralValue'],['教育価値','educationalValue'],['希少性','rarity'],['ストーリー性','storyPotential'],['再現性','reproducibility']]
+    },
+    {
+      key:'b',
+      title:'ビジネスポテンシャル（5項目 / 満点25点）',
+      items:[['ストック性','stockability'],['コンテンツ化しやすさ','contentEase'],['商品化しやすさ','productEase'],['体験化しやすさ','experienceEase'],['コミュニティ化しやすさ','communityEase']]
+    },
+    {
+      key:'e',
+      title:'実行指標（3項目 / 満点15点）',
+      items:[['初期コスト（5=低）','initialCost'],['手間（5=低）','effort'],['優先度','priority']]
     }
+  ];
 
-    function renderView() {
-      const hyps = DB.get(KEYS.h);
-      const h = hyps.find(x => x.id === id);
-      if (!h) { document.getElementById('content').innerHTML = '<div class="empty">仮説が見つかりません</div>'; return; }
+  function scoreBar(label, val, type) {
+    return '<div class="score-item">'
+      +'<span class="score-item__label">'+label+'</span>'
+      +'<div class="score-item__bar"><div class="score-item__fill fill--'+type+'" style="width:'+(val/5*100)+'%"></div></div>'
+      +'<span class="score-item__val">'+val+'</span>'
+      +'</div>';
+  }
 
-      const allObs = DB.get(KEYS.o);
-      const relatedObs = allObs.filter(o => (h.observationIds || []).includes(o.id));
+  var ts = totalScore(h);
+  var obs = getO().filter(function(o){return o.hypothesisId===h.id;});
+  var icon = CAT_ICON[h.category]||'&#x1F331;';
+  var statusCls = STATUS_CLS[h.status]||'badge--pre';
 
-      document.title = h.title + ' | SlowFarm DB';
-      document.getElementById('content').innerHTML =
-        '<div class="page-header"><div><div class="detail-meta"><span class="badge badge-' + h.status + '">' + h.status + '</span><span class="badge badge-' + h.category + '">' + h.category + '</span>' + confidenceHTML(h.confidence) + '</div><h1>' + h.title + '</h1><p class="subtitle">' + h.createdAt.slice(0,10).replace(/-/g,'/') + '</p></div><div style="display:flex;gap:0.5rem"><button class="btn btn-secondary" onclick="renderEdit()">編集</button><button class="btn btn-danger" onclick="deleteHyp()">削除</button></div></div>' +
-        '<div class="section">' +
-        (h.description ? '<div class="detail-field"><div class="detail-field-label">説明</div><div class="detail-field-value">' + h.description + '</div></div>' : '') +
-        (h.evidence ? '<div class="detail-field"><div class="detail-field-label">根拠・証拠</div><div class="detail-field-value">' + h.evidence + '</div></div>' : '') +
-        '</div>' +
-        '<div class="section"><div class="section-header"><h2>関連観察 (' + relatedObs.length + '件)</h2><button class="btn btn-secondary btn-sm" onclick="openLinkModal()">観察を紐付け</button></div>' +
-        (relatedObs.length
-          ? '<div class="grid">' + relatedObs.map(o =>
-              '<div class="card"><div class="card-header"><span class="card-title">' + o.title + '</span></div><div class="card-meta">' + o.date + ' · ' + o.location + '</div><div class="card-body">' + o.content.slice(0,100) + (o.content.length>100?'…':'') + '</div><div class="tags" style="margin-top:0.5rem">' + o.tags.map(t=>'<span class="tag">'+t+'</span>').join('') + '</div></div>'
-            ).join('') + '</div>'
-          : '<div class="empty">関連する観察がありません</div>') +
-        '</div>';
+  var html =
+    // ---- 詳細ヘッダー ----
+    '<div class="detail-header">'
+    +'<div class="container">'
+    +'<a href="hypotheses.html" class="back-link">&larr; 仮説一覧に戻る</a>'
+    +'<div class="detail-header__meta">'
+    +'<span class="badge '+statusCls+'">'+h.status+'</span>'
+    +'<span class="badge badge--cat">'+h.category+'</span>'
+    +(h.startDate?'<span style="font-size:0.75rem;opacity:0.6">開始: '+h.startDate+'</span>':'')
+    +'</div>'
+    +'<h1 class="detail-header__title">'+icon+' '+h.title+'</h1>'
+    +'</div></div>'
 
-      if (!document.getElementById('linkModal')) {
-        document.body.insertAdjacentHTML('beforeend',
-          '<div class="modal-overlay" id="linkModal"><div class="modal"><h2>観察を紐付け</h2><div id="obsCheckList" style="max-height:300px;overflow-y:auto"></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeLinkModal()">キャンセル</button><button class="btn btn-primary" onclick="saveLinks()">保存</button></div></div></div>'
-        );
-        document.getElementById('linkModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeLinkModal(); });
-      }
-      renderObsChecklist();
-    }
+    // ---- 本文グリッド ----
+    +'<div class="container page">'
+    +'<div class="grid-2" style="gap:2rem">'
 
-    function renderEdit() {
-      const hyps = DB.get(KEYS.h);
-      const h = hyps.find(x => x.id === id);
-      if (!h) return;
-      document.getElementById('content').innerHTML =
-        '<h1 style="margin-bottom:1.5rem">仮説を編集</h1>' +
-        '<form onsubmit="saveEdit(event)">' +
-        '<div class="form-group"><label>タイトル *</label><input type="text" name="title" value="' + h.title.replace(/"/g,'&quot;') + '" required></div>' +
-        '<div class="form-group"><label>説明</label><textarea name="description">' + (h.description||'') + '</textarea></div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">' +
-        '<div class="form-group"><label>カテゴリ</label><select name="category">' + ['収益性','持続性','市場性','運営'].map(c=>'<option'+(h.category===c?' selected':'')+'>'+c+'</option>').join('') + '</select></div>' +
-        '<div class="form-group"><label>ステータス</label><select name="status">' + ['検証中','支持','棄却','保留'].map(s=>'<option'+(h.status===s?' selected':'')+'>'+s+'</option>').join('') + '</select></div>' +
-        '</div>' +
-        '<div class="form-group"><label>確信度 (1-5)</label><input type="range" name="confidence" min="1" max="5" value="' + h.confidence + '" style="width:100%"></div>' +
-        '<div class="form-group"><label>根拠・証拠</label><textarea name="evidence">' + (h.evidence||'') + '</textarea></div>' +
-        '<div style="display:flex;gap:0.5rem;margin-top:1.5rem"><button type="button" class="btn btn-secondary" onclick="renderView()">キャンセル</button><button type="submit" class="btn btn-primary">保存する</button></div>' +
-        '</form>';
-    }
+    // 左カラム
+    +'<div>'
+    +'<div class="detail-section"><h3>概要・背景</h3><p>'+h.description+'</p></div>'
+    +'<div class="detail-section"><h3>検証項目</h3>'
+    +'<ul class="checklist">'
+    +(h.verificationItems||[]).map(function(v){
+        return '<li class="checklist__item"><span class="checklist__icon">□</span><span>'+v+'</span></li>';
+      }).join('')
+    +'</ul></div>'
+    +'<div class="detail-section"><h3>収益化パス</h3>'
+    +'<div class="badges">'
+    +(h.monetizationPaths||[]).map(function(p){return '<span class="badge badge--path">'+p+'</span>';}).join('')
+    +'</div></div>'
+    +(h.notes?'<div class="detail-section"><h3>メモ・補足</h3><p>'+h.notes+'</p></div>':'')
+    +'</div>'
 
-    function saveEdit(e) {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const hyps = DB.get(KEYS.h);
-      const idx = hyps.findIndex(x => x.id === id);
-      if (idx < 0) return;
-      hyps[idx] = { ...hyps[idx], title: fd.get('title'), description: fd.get('description'), category: fd.get('category'), status: fd.get('status'), confidence: parseInt(fd.get('confidence')), evidence: fd.get('evidence') };
-      DB.set(KEYS.h, hyps);
-      renderView();
-    }
+    // 右カラム: 14項目スコア
+    +'<div>'
+    +'<div class="total-score-box">'
+    +'<div class="total-score-box__label">14項目総合スコア</div>'
+    +'<div class="total-score-box__value">'+ts+'<span class="total-score-box__max">/70</span></div>'
+    +'</div>'
+    +GROUPS.map(function(g){
+        return '<div class="score-group">'
+          +'<div class="score-group__title">'+g.title+'</div>'
+          +g.items.map(function(item){return scoreBar(item[0],h.scores[item[1]],g.key);}).join('')
+          +'</div>';
+      }).join('')
+    +'</div>'
 
-    function deleteHyp() {
-      if (!confirm('この仮説を削除しますか？')) return;
-      DB.set(KEYS.h, DB.get(KEYS.h).filter(x => x.id !== id));
-      location.href = 'hypotheses.html';
-    }
+    +'</div>' // grid-2
 
-    function openLinkModal() { document.getElementById('linkModal').classList.add('open'); }
-    function closeLinkModal() { document.getElementById('linkModal').classList.remove('open'); }
+    // 関連観察記録
+    +'<hr class="divider">'
+    +'<div class="section">'
+    +'<div class="section__header">'
+    +'<span class="section__title">関連観察記録 ('+obs.length+'件)</span>'
+    +'<a href="observations.html" class="section__link">観察記録へ &rarr;</a>'
+    +'</div>'
+    +(obs.length
+      ? '<div style="display:flex;flex-direction:column;gap:0.75rem">'
+        +obs.sort(function(a,b){return b.date.localeCompare(a.date);}).map(function(o){
+            return '<div class="obs-card">'
+              +'<div class="obs-card__date-loc"><span>'+o.date+'</span><span>&middot;</span><span>'+o.location+'</span></div>'
+              +'<div class="obs-card__title">'+o.title+'</div>'
+              +'<div class="obs-card__content">'+o.content+'</div>'
+              +'<div class="badges mt-1">'+o.tags.map(function(t){return '<span class="badge badge--tag">'+t+'</span>';}).join('')+'</div>'
+              +'</div>';
+          }).join('')+'</div>'
+      : '<div class="empty">観察記録がありません</div>')
+    +'</div>'
+    +'</div>'; // container
 
-    function renderObsChecklist() {
-      const h = DB.get(KEYS.h).find(x => x.id === id);
-      if (!h) return;
-      const linked = h.observationIds || [];
-      const allObs = DB.get(KEYS.o);
-      document.getElementById('obsCheckList').innerHTML = allObs.length
-        ? allObs.map(o =>
-            '<label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border-bottom:1px solid var(--beige-dark);cursor:pointer"><input type="checkbox" name="obs" value="' + o.id + '"' + (linked.includes(o.id)?' checked':'') + '><span><strong>' + o.title + '</strong> <span style="color:var(--muted);font-size:0.8rem">' + o.date + '</span></span></label>'
-          ).join('')
-        : '<div class="empty">観察がありません</div>';
-    }
-
-    function saveLinks() {
-      const checked = [...document.querySelectorAll('#obsCheckList input:checked')].map(c => c.value);
-      const hyps = DB.get(KEYS.h);
-      const idx = hyps.findIndex(x => x.id === id);
-      if (idx < 0) return;
-      hyps[idx].observationIds = checked;
-      DB.set(KEYS.h, hyps);
-      const obs = DB.get(KEYS.o).map(o => ({ ...o, hypothesisId: checked.includes(o.id) ? id : (o.hypothesisId === id ? null : o.hypothesisId) }));
-      DB.set(KEYS.o, obs);
-      closeLinkModal();
-      renderView();
-    }
-
-    renderView();
-  </script>
+  document.getElementById('root').innerHTML = html;
+}
+</script>
 </body>
 </html>
