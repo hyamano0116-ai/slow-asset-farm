@@ -6,7 +6,6 @@
   <title>前提と思想 | 農的ストックDB</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* このページ固有の追加スタイル */
     .premise-hero {
       background: var(--header);
       color: #e8e0d0;
@@ -31,8 +30,6 @@
       font-size: 0.82rem;
       color: rgba(232,224,208,0.6);
     }
-
-    /* 前提カード */
     .premise-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -52,7 +49,6 @@
     .premise-card--b::before { background: var(--score-b); }
     .premise-card--e::before { background: var(--score-e); }
     .premise-card--h::before { background: var(--header); }
-
     .premise-card__num {
       font-size: 2rem;
       font-weight: 900;
@@ -73,10 +69,7 @@
       color: var(--text);
     }
     .premise-card__body p + p { margin-top: 0.6rem; }
-
     .premise-cards { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
-
-    /* 考え方セクション */
     .mindset-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -111,8 +104,6 @@
       font-weight: 600;
       color: var(--score-v);
     }
-
-    /* 引用ブロック */
     .blockquote {
       border-left: 3px solid var(--accent);
       padding: 0.75rem 1rem;
@@ -137,91 +128,78 @@
   </div>
 </nav>
 
-<!-- ページヘッダー -->
 <div class="premise-hero">
   <div class="container">
     <p class="premise-hero__label">Why this DB exists</p>
     <h1 class="premise-hero__title">このデータベースが存在する理由</h1>
-    <p class="premise-hero__author">ひろきの個人ノート &mdash; 山梨精進 &bull; 高冷地生活</p>
+    <p class="premise-hero__author">ひろきの個人ノート &mdash; 山梨県 高冷地生活</p>
   </div>
 </div>
 
 <div class="container page">
 
-  <!-- 対象者 -->
   <div class="section">
     <div class="section__header">
-      <span class="section__title">誤魔なく言うと</span>
+      <span class="section__title">素直に言うと</span>
     </div>
     <div class="blockquote">
-      嫫とも6得のサラリーマン家庭。現在の待遇に不満はない。だが、一つの会社に家計を乗っけている事実が、将来への不安としてある。
-      その不安をどう解消するか。投資ではなく、フロー嬉業でもなく、「積み上がる仕組み」を、田舎でいまダょんせいで作る。
+      嫫とて2人ともアルソアという会社に在籍するサラリーマン家庭。現在の待遇に不満はない。<br>
+      だが、「一つの会社に家計を全面依存している」という事実が、将来への不安としてある。<br>
+      その不安をどう解消するか。投資ではなく、フロー労働でもなく、「少しずつ積み上がる仕組み」を、山梨の田舎で今のうちに作る。<br>
       それがこのデータベースの存在理由。
     </div>
   </div>
 
-  <!-- 4つの前提 -->
   <div class="section">
     <div class="section__header">
       <span class="section__title">4つの前提</span>
     </div>
     <div class="premise-cards">
 
-      <!-- 前提① -->
       <div class="premise-card premise-card--h">
         <div class="premise-card__num">01</div>
         <div class="premise-card__title">会社依存からの脱却</div>
         <div class="premise-card__body">
           <p>嫫とともにアルソアという会社に在籍している。待遇の水準に不満は少ない。</p>
-          <p>しかし、<strong>家計として一つの会社への依存度が高すぎる</strong>というリスクがある。
-          会社の方针転換、廃業、健康問題、地域との不辺合……何か一つ狂っただけで家計が崩れる構造は、小さな子どもがいる内に解消したい。</p>
+          <p>しかし、<strong>家計として一つの会社への依存度が高すぎる</strong>というリスクがある。会社の方针転換、廃業、健康問題、地域との不合……何か一つ狂っただけで家計が崩れる構造は、小さな子どもがいる内に解消したい。</p>
           <p>「辞めたくないから辞めない」ではなく、<strong>辞めても大丈夫な状態を先に作る</strong>。そのことの方が、本当の意味で安定したサラリーマン生活になると思っている。</p>
         </div>
       </div>
 
-      <!-- 前提② -->
       <div class="premise-card premise-card--v">
         <div class="premise-card__num">02</div>
         <div class="premise-card__title">ストックビジネスの確立</div>
         <div class="premise-card__body">
-          <p>給与は「働いた分だけ払われる」フローの収入である。偽みなく言えば、唆いでいる限りしかお金が入らない。</p>
-          <p>一方、<strong>ストックビジネス</strong>は遁び圈を調りておけば、笑っていても少しずつお金が入る状態が作れる。
-          女性有利な副業側面から考えると、<strong>育児中でも資産化できるコンテンツ・体験・コミュニティ</strong>の仙5組みが理想。</p>
-          <p>農業とフィールドワークは、「それ自体がコンテンツになる」という点で付加価値が類い。記録すること、楅えること、体験を提供することが、すべて資産になる。</p>
+          <p>給与は「働いた分だけ払われる」フローの収入。唆いでいる限りしかお金が入らない。</p>
+          <p>一方、<strong>ストックビジネス</strong>は仕組みを作っておけば、寓ていても少しずつお金が入る状態が作れる。<strong>育児中でも資産化できるコンテンツ・体験・コミュニティの仕組み</strong>が理想。</p>
+          <p>農業とフィールドワークは、「それ自体がコンテンツになる」という点で他の副業より仸加価値が高い。記録すること、教えること、体験を提供することが、すべて資産になる。</p>
         </div>
       </div>
 
-      <!-- 前提③ -->
       <div class="premise-card premise-card--b">
         <div class="premise-card__num">03</div>
         <div class="premise-card__title">大きな投資なしのニッチビジネス</div>
         <div class="premise-card__body">
-          <p>「大きく展ぞう」とは思っていない。
-          公共料金や販売承認を取って大規模展開するようなことではなく、<strong>1人から数人の人が実際にお金を払ってくれる小さな世界の実績をそを積み上げる</strong>ことが先。</p>
-          <p>山梨の田舎・高冷地という階層性はそのままディフェンスになる。大きな資本を持った競合相手が入りにくい領域で、小さくても確かな実績を作れる。
-          市場規模を狙うのではなく、<strong>安っぱいでもニッチで东東に育てる</strong>ことが目的。</p>
+          <p>大きく展開しようとは思っていない。<strong>1人から数人が実際にお金を払ってくれる小さな実績を積み上げる</strong>ことが先。公共資金や販売承認を取って大規模展開するようなことではない。</p>
+          <p>山梨の田舎・高冷地という特性はそのままディフェンスになる。大きな資本を持った競合相手が入りにくい領域で、小さくても確かな実績を作れる。<strong>山梨・田舎のニッチでじっくり育てる</strong>ことが目的。</p>
         </div>
       </div>
 
-      <!-- 前提④ -->
       <div class="premise-card premise-card--e">
         <div class="premise-card__num">04</div>
         <div class="premise-card__title">地方・田舎・長期の優位性</div>
         <div class="premise-card__body">
-          <p>都市に住んでいる人にはできないことを、地方に住んでいるからこそデキる。
-          時間がかかること、標高差、自然環境、落ち葉や湧水や放棄地……都市呈では「コスト」がかかるものが、自分の周りにはただある。</p>
-          <p>「一発逆転を箇る」のではなく、<strong>毎年少しずつ井戸を掘り進め、数年後に揯気なく流れている状態を作る</strong>。
-          それがこのデータベースで仮説を管理し、観察を続けている理由。</p>
+          <p>都市に住んでいる人にはできないことを、地方に住んでいるからこそできる。時間がかかること、標高差、自然環境、落ち葉や湧水や放棄地……都市圈では「コスト」がかかるものが、自分の周りにはただある。</p>
+          <p>「一発逆転を狙う」のではなく、<strong>毎年少しずつ井戸を掘り進め、数年後に自然と流れている状態を作る</strong>。それがこのデータベースで仮説を管理し、観察を続けている理由。</p>
         </div>
       </div>
 
     </div>
   </div>
 
-  <!-- 考え方の一覧 -->
   <div class="section">
     <div class="section__header">
-      <span class="section__title">やる・やらないの分がれ目</span>
+      <span class="section__title">やる・やらないの分かれ目</span>
     </div>
     <div class="mindset-grid">
       <div class="mindset-item">
@@ -231,8 +209,8 @@
       </div>
       <div class="mindset-item">
         <div class="mindset-item__label">収入構造</div>
-        <div class="mindset-item__not">働いた分だけ退豆の労働収入</div>
-        <div class="mindset-item__yes">少しためても流れるストック収入</div>
+        <div class="mindset-item__not">唆いた分だけの労働収入</div>
+        <div class="mindset-item__yes">寓ていても少し流れるストック収入</div>
       </div>
       <div class="mindset-item">
         <div class="mindset-item__label">地域性</div>
@@ -242,7 +220,7 @@
       <div class="mindset-item">
         <div class="mindset-item__label">時間軸</div>
         <div class="mindset-item__not">今年中に利益を出す</div>
-        <div class="mindset-item__yes">3〜10年单位で地盤を固める</div>
+        <div class="mindset-item__yes">3〜10年単位で地盤を固める</div>
       </div>
       <div class="mindset-item">
         <div class="mindset-item__label">商品化</div>
@@ -251,28 +229,26 @@
       </div>
       <div class="mindset-item">
         <div class="mindset-item__label">リスク</div>
-        <div class="mindset-item__not">借入れや連帯保証で大れいする</div>
+        <div class="mindset-item__not">借入れ・連帯保証で無理をする</div>
         <div class="mindset-item__yes">家計へのダメージを最小化した実験</div>
       </div>
     </div>
   </div>
 
-  <!-- このDBの使い方 -->
   <div class="section">
     <div class="section__header">
       <span class="section__title">このDBの使い方</span>
     </div>
     <div class="premise-card premise-card--v">
       <div class="premise-card__body">
-        <p><strong>&#x2460; 仮説を立てる</strong> &mdash; 「これはストック資産になるか？」を仮説として登録する。</p>
-        <p><strong>&#x2461; 観察する</strong> &mdash; フィールドできたことを記録する。手間はかからない。</p>
-        <p><strong>&#x2462; スコアを見る</strong> &mdash; 14項目の評価で「どこに先に時間を使うべきか」を判断する。</p>
-        <p><strong>&#x2463; 少しずつ組み立てる</strong> &mdash; 山梨の現場から生まれたデータが、いつか記事になり、講座になり、商品になる。</p>
+        <p><strong>(1) 仮説を立てる</strong> &mdash; 「これはストック資産になるか？」を仮説として登録する。</p>
+        <p><strong>(2) 観察する</strong> &mdash; フィールドで気づいたことを記録する。手間はかからない。</p>
+        <p><strong>(3) スコアを見る</strong> &mdash; 14項目の評価で「どこに先に時間を使うべきか」を判断する。</p>
+        <p><strong>(4) 少しずつ組み立てる</strong> &mdash; 山梨の現場から生まれたデータが、いつか記事になり、講座になり、商品になる。</p>
       </div>
     </div>
   </div>
 
-  <!-- 内部リンク -->
   <div class="section" style="padding-bottom:1rem">
     <div class="section__header"><span class="section__title">ページ一覧</span></div>
     <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
