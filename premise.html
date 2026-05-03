@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前提と思想 | 農的ストックDB</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* このページ固有の追加スタイル */
+    .premise-hero {
+      background: var(--header);
+      color: #e8e0d0;
+      padding: 2.5rem 1.25rem 2rem;
+    }
+    .premise-hero__label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(232,224,208,0.55);
+      margin-bottom: 0.5rem;
+    }
+    .premise-hero__title {
+      font-size: clamp(1.3rem, 3.5vw, 1.9rem);
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+    }
+    .premise-hero__author {
+      font-size: 0.82rem;
+      color: rgba(232,224,208,0.6);
+    }
+
+    /* 前提カード */
+    .premise-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem 1.5rem 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .premise-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px;
+      height: 100%;
+    }
+    .premise-card--v::before { background: var(--score-v); }
+    .premise-card--b::before { background: var(--score-b); }
+    .premise-card--e::before { background: var(--score-e); }
+    .premise-card--h::before { background: var(--header); }
+
+    .premise-card__num {
+      font-size: 2rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--border);
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.05em;
+    }
+    .premise-card__title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      color: var(--accent);
+    }
+    .premise-card__body {
+      font-size: 0.875rem;
+      line-height: 1.75;
+      color: var(--text);
+    }
+    .premise-card__body p + p { margin-top: 0.6rem; }
+
+    .premise-cards { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+
+    /* 考え方セクション */
+    .mindset-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 480px) {
+      .mindset-grid { grid-template-columns: 1fr; }
+    }
+    .mindset-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+    }
+    .mindset-item__label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .mindset-item__not {
+      font-size: 0.82rem;
+      color: #b0392b;
+      text-decoration: line-through;
+      margin-bottom: 0.15rem;
+    }
+    .mindset-item__yes {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--score-v);
+    }
+
+    /* 引用ブロック */
+    .blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 0.75rem 1rem;
+      background: #faf7f2;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav__logo">&#x1F33F; 農的ストックDB</a>
+  <div class="nav__links">
+    <a href="index.html" class="nav__link">ホーム</a>
+    <a href="hypotheses.html" class="nav__link">仮説一覧</a>
+    <a href="observations.html" class="nav__link">観察記録</a>
+    <a href="premise.html" class="nav__link nav__link--active">前提</a>
+  </div>
+</nav>
+
+<!-- ページヘッダー -->
+<div class="premise-hero">
+  <div class="container">
+    <p class="premise-hero__label">Why this DB exists</p>
+    <h1 class="premise-hero__title">このデータベースが存在する理由</h1>
+    <p class="premise-hero__author">ひろきの個人ノート &mdash; 山梨精進 &bull; 高冷地生活</p>
+  </div>
+</div>
+
+<div class="container page">
+
+  <!-- 対象者 -->
+  <div class="section">
+    <div class="section__header">
+      <span class="section__title">誤魔なく言うと</span>
+    </div>
+    <div class="blockquote">
+      嫫とも6得のサラリーマン家庭。現在の待遇に不満はない。だが、一つの会社に家計を乗っけている事実が、将来への不安としてある。
+      その不安をどう解消するか。投資ではなく、フロー嬉業でもなく、「積み上がる仕組み」を、田舎でいまダょんせいで作る。
+      それがこのデータベースの存在理由。
+    </div>
+  </div>
+
+  <!-- 4つの前提 -->
+  <div class="section">
+    <div class="section__header">
+      <span class="section__title">4つの前提</span>
+    </div>
+    <div class="premise-cards">
+
+      <!-- 前提① -->
+      <div class="premise-card premise-card--h">
+        <div class="premise-card__num">01</div>
+        <div class="premise-card__title">会社依存からの脱却</div>
+        <div class="premise-card__body">
+          <p>嫫とともにアルソアという会社に在籍している。待遇の水準に不満は少ない。</p>
+          <p>しかし、<strong>家計として一つの会社への依存度が高すぎる</strong>というリスクがある。
+          会社の方针転換、廃業、健康問題、地域との不辺合……何か一つ狂っただけで家計が崩れる構造は、小さな子どもがいる内に解消したい。</p>
+          <p>「辞めたくないから辞めない」ではなく、<strong>辞めても大丈夫な状態を先に作る</strong>。そのことの方が、本当の意味で安定したサラリーマン生活になると思っている。</p>
+        </div>
+      </div>
+
+      <!-- 前提② -->
+      <div class="premise-card premise-card--v">
+        <div class="premise-card__num">02</div>
+        <div class="premise-card__title">ストックビジネスの確立</div>
+        <div class="premise-card__body">
+          <p>給与は「働いた分だけ払われる」フローの収入である。偽みなく言えば、唆いでいる限りしかお金が入らない。</p>
+          <p>一方、<strong>ストックビジネス</strong>は遁び圈を調りておけば、笑っていても少しずつお金が入る状態が作れる。
+          女性有利な副業側面から考えると、<strong>育児中でも資産化できるコンテンツ・体験・コミュニティ</strong>の仙5組みが理想。</p>
+          <p>農業とフィールドワークは、「それ自体がコンテンツになる」という点で付加価値が類い。記録すること、楅えること、体験を提供することが、すべて資産になる。</p>
+        </div>
+      </div>
+
+      <!-- 前提③ -->
+      <div class="premise-card premise-card--b">
+        <div class="premise-card__num">03</div>
+        <div class="premise-card__title">大きな投資なしのニッチビジネス</div>
+        <div class="premise-card__body">
+          <p>「大きく展ぞう」とは思っていない。
+          公共料金や販売承認を取って大規模展開するようなことではなく、<strong>1人から数人の人が実際にお金を払ってくれる小さな世界の実績をそを積み上げる</strong>ことが先。</p>
+          <p>山梨の田舎・高冷地という階層性はそのままディフェンスになる。大きな資本を持った競合相手が入りにくい領域で、小さくても確かな実績を作れる。
+          市場規模を狙うのではなく、<strong>安っぱいでもニッチで东東に育てる</strong>ことが目的。</p>
+        </div>
+      </div>
+
+      <!-- 前提④ -->
+      <div class="premise-card premise-card--e">
+        <div class="premise-card__num">04</div>
+        <div class="premise-card__title">地方・田舎・長期の優位性</div>
+        <div class="premise-card__body">
+          <p>都市に住んでいる人にはできないことを、地方に住んでいるからこそデキる。
+          時間がかかること、標高差、自然環境、落ち葉や湧水や放棄地……都市呈では「コスト」がかかるものが、自分の周りにはただある。</p>
+          <p>「一発逆転を箇る」のではなく、<strong>毎年少しずつ井戸を掘り進め、数年後に揯気なく流れている状態を作る</strong>。
+          それがこのデータベースで仮説を管理し、観察を続けている理由。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 考え方の一覧 -->
+  <div class="section">
+    <div class="section__header">
+      <span class="section__title">やる・やらないの分がれ目</span>
+    </div>
+    <div class="mindset-grid">
+      <div class="mindset-item">
+        <div class="mindset-item__label">投資規模</div>
+        <div class="mindset-item__not">大きな初期投資で一発逆転</div>
+        <div class="mindset-item__yes">小さく始めて毎年積み上げる</div>
+      </div>
+      <div class="mindset-item">
+        <div class="mindset-item__label">収入構造</div>
+        <div class="mindset-item__not">働いた分だけ退豆の労働収入</div>
+        <div class="mindset-item__yes">少しためても流れるストック収入</div>
+      </div>
+      <div class="mindset-item">
+        <div class="mindset-item__label">地域性</div>
+        <div class="mindset-item__not">全国・海外展開を目指す</div>
+        <div class="mindset-item__yes">山梨・田舎ならではの希少性を武器に</div>
+      </div>
+      <div class="mindset-item">
+        <div class="mindset-item__label">時間軸</div>
+        <div class="mindset-item__not">今年中に利益を出す</div>
+        <div class="mindset-item__yes">3〜10年单位で地盤を固める</div>
+      </div>
+      <div class="mindset-item">
+        <div class="mindset-item__label">商品化</div>
+        <div class="mindset-item__not">作ったものだけを売る</div>
+        <div class="mindset-item__yes">記録・体験・知識も資産化</div>
+      </div>
+      <div class="mindset-item">
+        <div class="mindset-item__label">リスク</div>
+        <div class="mindset-item__not">借入れや連帯保証で大れいする</div>
+        <div class="mindset-item__yes">家計へのダメージを最小化した実験</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- このDBの使い方 -->
+  <div class="section">
+    <div class="section__header">
+      <span class="section__title">このDBの使い方</span>
+    </div>
+    <div class="premise-card premise-card--v">
+      <div class="premise-card__body">
+        <p><strong>&#x2460; 仮説を立てる</strong> &mdash; 「これはストック資産になるか？」を仮説として登録する。</p>
+        <p><strong>&#x2461; 観察する</strong> &mdash; フィールドできたことを記録する。手間はかからない。</p>
+        <p><strong>&#x2462; スコアを見る</strong> &mdash; 14項目の評価で「どこに先に時間を使うべきか」を判断する。</p>
+        <p><strong>&#x2463; 少しずつ組み立てる</strong> &mdash; 山梨の現場から生まれたデータが、いつか記事になり、講座になり、商品になる。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 内部リンク -->
+  <div class="section" style="padding-bottom:1rem">
+    <div class="section__header"><span class="section__title">ページ一覧</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
+      <a href="index.html" class="btn btn--ghost">ホーム</a>
+      <a href="hypotheses.html" class="btn btn--primary">仮説一覧を見る</a>
+      <a href="observations.html" class="btn btn--ghost">観察記録を見る</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
