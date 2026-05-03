@@ -12,107 +12,151 @@
       padding: 2.5rem 1.25rem 2rem;
     }
     .premise-hero__label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(232,224,208,0.55);
-      margin-bottom: 0.5rem;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(232,224,208,0.55); margin-bottom: 0.5rem;
     }
     .premise-hero__title {
-      font-size: clamp(1.3rem, 3.5vw, 1.9rem);
-      font-weight: 800;
-      line-height: 1.3;
-      margin-bottom: 0.75rem;
-      letter-spacing: -0.02em;
+      font-size: clamp(1.3rem, 3.5vw, 1.9rem); font-weight: 800;
+      line-height: 1.3; margin-bottom: 0.75rem; letter-spacing: -0.02em;
     }
-    .premise-hero__author {
-      font-size: 0.82rem;
-      color: rgba(232,224,208,0.6);
+    .premise-hero__author { font-size: 0.82rem; color: rgba(232,224,208,0.6); }
+
+    /* hero equation */
+    .hero-eq {
+      display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: 0.5rem;
+      margin-top: 1.5rem; padding-top: 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.15);
     }
+    .eq-term {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 10px; padding: 0.5rem 0.75rem; text-align: center; min-width: 62px;
+    }
+    .eq-term__icon { font-size: 1.3rem; line-height: 1; display: block; }
+    .eq-term__text { font-size: 0.66rem; margin-top: 0.2rem; opacity: 0.85; display: block; }
+    .eq-op { font-size: 1.1rem; opacity: 0.5; }
+    .eq-result {
+      background: rgba(255,255,255,0.22); border: 2px solid rgba(255,255,255,0.45);
+      border-radius: 10px; padding: 0.5rem 1rem; text-align: center;
+    }
+    .eq-result__icon { font-size: 1.3rem; line-height: 1; display: block; }
+    .eq-result__text { font-size: 0.72rem; font-weight: 700; margin-top: 0.2rem; display: block; }
+
+    /* premise cards */
     .premise-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.5rem 1.5rem 1.25rem;
-      position: relative;
-      overflow: hidden;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.5rem 1.5rem 1.25rem;
+      position: relative; overflow: hidden;
     }
     .premise-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 4px;
-      height: 100%;
+      content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
     }
     .premise-card--v::before { background: var(--score-v); }
     .premise-card--b::before { background: var(--score-b); }
     .premise-card--e::before { background: var(--score-e); }
     .premise-card--h::before { background: var(--header); }
     .premise-card__num {
-      font-size: 2rem;
-      font-weight: 900;
-      line-height: 1;
-      color: var(--border);
-      margin-bottom: 0.25rem;
-      letter-spacing: -0.05em;
+      font-size: 2rem; font-weight: 900; line-height: 1;
+      color: var(--border); margin-bottom: 0.25rem; letter-spacing: -0.05em;
     }
-    .premise-card__title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.6rem;
-      color: var(--accent);
-    }
-    .premise-card__body {
-      font-size: 0.875rem;
-      line-height: 1.75;
-      color: var(--text);
-    }
+    .premise-card__title { font-size: 1rem; font-weight: 700; margin-bottom: 0.6rem; color: var(--accent); }
+    .premise-card__body { font-size: 0.875rem; line-height: 1.75; color: var(--text); }
     .premise-card__body p + p { margin-top: 0.6rem; }
     .premise-cards { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
-    .mindset-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-top: 1rem;
+
+    /* risk diagram */
+    .risk-diagram { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem; }
+    .risk-panel {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.875rem 0.75rem 0.75rem; text-align: center;
     }
-    @media (max-width: 480px) {
-      .mindset-grid { grid-template-columns: 1fr; }
+    .risk-badge {
+      display: inline-block; font-size: 0.62rem; font-weight: 700;
+      padding: 0.15rem 0.5rem; border-radius: 20px; margin-bottom: 0.6rem;
     }
+    .risk-panel--bad .risk-badge { background: #fde8e8; color: #b0392b; }
+    .risk-panel--good .risk-badge { background: #e6f4ea; color: #2e7d52; }
+    .risk-house {
+      display: inline-block; background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 6px; padding: 0.15rem 0.6rem; font-size: 0.72rem; font-weight: 700;
+    }
+    .risk-house--bad { border-color: #e08080; }
+    .risk-house--good { border-color: #6db08f; }
+    .risk-stems { display: flex; justify-content: center; gap: 4px; margin: 4px 0; height: 26px; }
+    .risk-stem { border-radius: 2px 2px 0 0; width: 8px; }
+    .risk-stem--bad { background: #e08080; width: 10px; }
+    .risk-stem--good { background: #6db08f; }
+    .risk-bases { display: flex; justify-content: center; gap: 3px; }
+    .risk-base {
+      font-size: 0.58rem; border-radius: 4px; padding: 0.1rem 0.35rem;
+    }
+    .risk-base--bad { background: #fde8e8; color: #b0392b; font-weight: 700; }
+    .risk-base--good { background: #e6f4ea; color: #2e7d52; }
+    .risk-note { font-size: 0.62rem; color: var(--muted); margin-top: 0.45rem; }
+
+    /* income chart */
+    .income-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem; }
+    .income-panel {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.75rem;
+    }
+    .income-panel__title { font-size: 0.72rem; font-weight: 700; text-align: center; margin-bottom: 0.6rem; }
+    .income-bars { display: flex; align-items: flex-end; height: 68px; gap: 5px; }
+    .income-bar { flex: 1; border-radius: 3px 3px 0 0; min-height: 2px; }
+    .income-note { font-size: 0.62rem; text-align: center; margin-top: 0.4rem; color: var(--muted); }
+
+    /* resource grid */
+    .resource-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem; margin-top: 1rem;
+    }
+    .resource-item {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.6rem 0.35rem; text-align: center;
+    }
+    .resource-item__icon { font-size: 1.2rem; line-height: 1; }
+    .resource-item__name { font-size: 0.62rem; font-weight: 600; margin-top: 0.2rem; color: var(--text); }
+    .resource-item__tag { font-size: 0.58rem; color: var(--score-v); margin-top: 0.1rem; font-weight: 600; }
+
+    /* growth timeline */
+    .growth-timeline {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.875rem 1rem; margin-top: 0.75rem;
+    }
+    .growth-timeline__title {
+      font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.6rem;
+    }
+    .growth-track { display: flex; align-items: flex-end; gap: 3px; height: 52px; }
+    .growth-bar { flex: 1; background: var(--score-v); border-radius: 3px 3px 0 0; }
+    .growth-labels { display: flex; margin-top: 3px; }
+    .growth-label { flex: 1; font-size: 0.57rem; color: var(--muted); text-align: center; }
+    .growth-phases { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+    .growth-phase {
+      flex: 1; font-size: 0.6rem; color: var(--muted);
+      border-left: 2px solid var(--border); padding-left: 0.3rem;
+    }
+    .growth-phase span { display: block; color: var(--text); font-weight: 600; }
+
+    /* mindset */
+    .mindset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem; }
+    @media (max-width: 480px) { .mindset-grid { grid-template-columns: 1fr; } }
     .mindset-item {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.75rem 1rem;
     }
     .mindset-item__label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      margin-bottom: 0.25rem;
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.25rem;
     }
-    .mindset-item__not {
-      font-size: 0.82rem;
-      color: #b0392b;
-      text-decoration: line-through;
-      margin-bottom: 0.15rem;
-    }
-    .mindset-item__yes {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--score-v);
-    }
+    .mindset-item__not { font-size: 0.82rem; color: #b0392b; text-decoration: line-through; margin-bottom: 0.15rem; }
+    .mindset-item__yes { font-size: 0.9rem; font-weight: 600; color: var(--score-v); }
+
     .blockquote {
-      border-left: 3px solid var(--accent);
-      padding: 0.75rem 1rem;
-      background: #faf7f2;
-      border-radius: 0 8px 8px 0;
-      font-size: 0.9rem;
-      line-height: 1.7;
-      color: var(--text);
-      margin: 1rem 0;
+      border-left: 3px solid var(--accent); padding: 0.75rem 1rem;
+      background: #faf7f2; border-radius: 0 8px 8px 0;
+      font-size: 0.9rem; line-height: 1.7; color: var(--text); margin: 1rem 0;
     }
   </style>
 </head>
@@ -133,15 +177,34 @@
     <p class="premise-hero__label">Why this DB exists</p>
     <h1 class="premise-hero__title">&#x3053;&#x306e;&#x30c7;&#x30fc;&#x30bf;&#x30d9;&#x30fc;&#x30b9;&#x304c;&#x5b58;&#x5728;&#x3059;&#x308b;&#x7406;&#x7531;</h1>
     <p class="premise-hero__author">&#x3072;&#x308d;&#x304d;&#x306e;&#x500b;&#x4eba;&#x30ce;&#x30fc;&#x30c8; &mdash; &#x5c71;&#x68a8;&#x770c; &#x9ad8;&#x51b7;&#x5730;&#x751f;&#x6d3b;</p>
+    <div class="hero-eq">
+      <div class="eq-term">
+        <span class="eq-term__icon">&#x26f0;&#xfe0f;</span>
+        <span class="eq-term__text">&#x7530;&#x820e;&#x30fb;&#x5c71;&#x68a8;</span>
+      </div>
+      <span class="eq-op">&times;</span>
+      <div class="eq-term">
+        <span class="eq-term__icon">&#x23f3;</span>
+        <span class="eq-term__text">&#x6642;&#x9593;&#x30fb;&#x9577;&#x671f;&#x76ee;&#x7dda;</span>
+      </div>
+      <span class="eq-op">&times;</span>
+      <div class="eq-term">
+        <span class="eq-term__icon">&#x1f331;</span>
+        <span class="eq-term__text">&#x8fb2;&#x7684;&#x5b9f;&#x8df5;</span>
+      </div>
+      <span class="eq-op">=</span>
+      <div class="eq-result">
+        <span class="eq-result__icon">&#x1f4c8;</span>
+        <span class="eq-result__text">&#x30b9;&#x30c8;&#x30c3;&#x30af;&#x8cc7;&#x7523;</span>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="container page">
 
   <div class="section">
-    <div class="section__header">
-      <span class="section__title">&#x7d20;&#x76f4;&#x306b;&#x8a00;&#x3046;&#x3068;</span>
-    </div>
+    <div class="section__header"><span class="section__title">&#x7d20;&#x76f4;&#x306b;&#x8a00;&#x3046;&#x3068;</span></div>
     <div class="blockquote">
       &#x59bb;&#x3068;2&#x4eba;&#x3068;&#x3082;&#x30a2;&#x30eb;&#x30bd;&#x30a2;&#x3068;&#x3044;&#x3046;&#x4f1a;&#x793e;&#x306b;&#x5728;&#x7c4d;&#x3059;&#x308b;&#x30b5;&#x30e9;&#x30ea;&#x30fc;&#x30de;&#x30f3;&#x5bb6;&#x5ead;&#x3002;&#x73fe;&#x5728;&#x306e;&#x5f85;&#x9047;&#x306b;&#x4e0d;&#x6e80;&#x306f;&#x306a;&#x3044;&#x3002;<br>
       &#x3060;&#x304c;&#x3001;&#x300c;&#x4e00;&#x3064;&#x306e;&#x4f1a;&#x793e;&#x306b;&#x5bb6;&#x8a08;&#x3092;&#x5168;&#x9762;&#x4f9d;&#x5b58;&#x3057;&#x3066;&#x3044;&#x308b;&#x300d;&#x3068;&#x3044;&#x3046;&#x4e8b;&#x5b9f;&#x304c;&#x3001;&#x5c06;&#x6765;&#x3078;&#x306e;&#x4e0d;&#x5b89;&#x3068;&#x3057;&#x3066;&#x3042;&#x308b;&#x3002;<br>
@@ -151,11 +214,10 @@
   </div>
 
   <div class="section">
-    <div class="section__header">
-      <span class="section__title">4&#x3064;&#x306e;&#x524d;&#x63d0;</span>
-    </div>
+    <div class="section__header"><span class="section__title">4&#x3064;&#x306e;&#x524d;&#x63d0;</span></div>
     <div class="premise-cards">
 
+      <!-- 01 -->
       <div class="premise-card premise-card--h">
         <div class="premise-card__num">01</div>
         <div class="premise-card__title">&#x4f1a;&#x793e;&#x4f9d;&#x5b58;&#x304b;&#x3089;&#x306e;&#x8131;&#x5374;</div>
@@ -164,18 +226,66 @@
           <p>&#x3057;&#x304b;&#x3057;&#x3001;<strong>&#x5bb6;&#x8a08;&#x3068;&#x3057;&#x3066;&#x4e00;&#x3064;&#x306e;&#x4f1a;&#x793e;&#x3078;&#x306e;&#x4f9d;&#x5b58;&#x5ea6;&#x304c;&#x9ad8;&#x3059;&#x304e;&#x308b;</strong>&#x3068;&#x3044;&#x3046;&#x30ea;&#x30b9;&#x30af;&#x304c;&#x3042;&#x308b;&#x3002;&#x4f1a;&#x793e;&#x306e;&#x65b9;&#x9488;&#x8ee2;&#x63db;&#x3001;&#x5ec3;&#x696d;&#x3001;&#x5065;&#x5eb7;&#x554f;&#x984c;&#x3001;&#x5730;&#x57df;&#x3068;&#x306e;&#x4e0d;&#x90fd;&#x5408;&#x2026;&#x2026;&#x4f55;&#x304b;&#x4e00;&#x3064;&#x72c2;&#x3063;&#x305f;&#x3060;&#x3051;&#x3067;&#x5bb6;&#x8a08;&#x304c;&#x5d29;&#x308c;&#x308b;&#x69cb;&#x9020;&#x306f;&#x3001;&#x5c0f;&#x3055;&#x306a;&#x5b50;&#x3069;&#x3082;&#x304c;&#x3044;&#x308b;&#x5185;&#x306b;&#x89e3;&#x6d88;&#x3057;&#x305f;&#x3044;&#x3002;</p>
           <p>&#x300c;&#x8f9e;&#x3081;&#x305f;&#x304f;&#x306a;&#x3044;&#x304b;&#x3089;&#x8f9e;&#x3081;&#x306a;&#x3044;&#x300d;&#x3067;&#x306f;&#x306a;&#x304f;&#x3001;<strong>&#x8f9e;&#x3081;&#x3066;&#x3082;&#x5927;&#x4e08;&#x592b;&#x306a;&#x72b6;&#x614b;&#x3092;&#x5148;&#x306b;&#x4f5c;&#x308b;</strong>&#x3002;&#x305d;&#x306e;&#x3053;&#x3068;&#x306e;&#x65b9;&#x304c;&#x3001;&#x672c;&#x5f53;&#x306e;&#x610f;&#x5473;&#x3067;&#x5b89;&#x5b9a;&#x3057;&#x305f;&#x30b5;&#x30e9;&#x30ea;&#x30fc;&#x30de;&#x30f3;&#x751f;&#x6d3b;&#x306b;&#x306a;&#x308b;&#x3068;&#x601d;&#x3063;&#x3066;&#x3044;&#x308b;&#x3002;</p>
         </div>
+        <div class="risk-diagram">
+          <div class="risk-panel risk-panel--bad">
+            <span class="risk-badge">&#xd7; &#x73fe;&#x72b6;</span><br>
+            <div class="risk-house risk-house--bad">&#x5bb6;&#x8a08;</div>
+            <div class="risk-stems"><div class="risk-stem risk-stem--bad"></div></div>
+            <div class="risk-bases"><span class="risk-base risk-base--bad">1&#x793e;&#x306e;&#x307f;</span></div>
+            <div class="risk-note">1&#x672c;&#x5012;&#x308c;&#x308b;&#x3068;&#x7d42;&#x308f;&#x308a;</div>
+          </div>
+          <div class="risk-panel risk-panel--good">
+            <span class="risk-badge">&#x25cb; &#x76ee;&#x6307;&#x3059;&#x59ff;</span><br>
+            <div class="risk-house risk-house--good">&#x5bb6;&#x8a08;</div>
+            <div class="risk-stems">
+              <div class="risk-stem risk-stem--good"></div>
+              <div class="risk-stem risk-stem--good"></div>
+              <div class="risk-stem risk-stem--good"></div>
+            </div>
+            <div class="risk-bases">
+              <span class="risk-base risk-base--good">&#x7d66;&#x4e0e;</span>
+              <span class="risk-base risk-base--good">&#x526f;&#x696d;</span>
+              <span class="risk-base risk-base--good">&#x4ed5;&#x7d44;</span>
+            </div>
+            <div class="risk-note">&#x5206;&#x6563;&#x3067;&#x5012;&#x308c;&#x306b;&#x304f;&#x3044;</div>
+          </div>
+        </div>
       </div>
 
+      <!-- 02 -->
       <div class="premise-card premise-card--v">
         <div class="premise-card__num">02</div>
         <div class="premise-card__title">&#x30b9;&#x30c8;&#x30c3;&#x30af;&#x30d3;&#x30b8;&#x30cd;&#x30b9;&#x306e;&#x78ba;&#x7acb;</div>
         <div class="premise-card__body">
           <p>&#x7d66;&#x4e0e;&#x306f;&#x300c;&#x50cd;&#x3044;&#x305f;&#x5206;&#x3060;&#x3051;&#x6255;&#x308f;&#x308c;&#x308b;&#x300d;&#x30d5;&#x30ed;&#x30fc;&#x306e;&#x53ce;&#x5165;&#x3002;&#x5506;&#x3044;&#x3067;&#x3044;&#x308b;&#x9650;&#x308a;&#x3057;&#x304b;&#x304a;&#x91d1;&#x304c;&#x5165;&#x3089;&#x306a;&#x3044;&#x3002;</p>
           <p>&#x4e00;&#x65b9;&#x3001;<strong>&#x30b9;&#x30c8;&#x30c3;&#x30af;&#x30d3;&#x30b8;&#x30cd;&#x30b9;</strong>&#x306f;&#x4ed5;&#x7d44;&#x307f;&#x3092;&#x4f5c;&#x3063;&#x3066;&#x304a;&#x3051;&#x3070;&#x3001;&#x5bdd;&#x3066;&#x3044;&#x3066;&#x3082;&#x5c11;&#x3057;&#x305a;&#x3064;&#x304a;&#x91d1;&#x304c;&#x5165;&#x308b;&#x72b6;&#x614b;&#x304c;&#x4f5c;&#x308c;&#x308b;&#x3002;<strong>&#x80b2;&#x5150;&#x4e2d;&#x3067;&#x3082;&#x8cc7;&#x7523;&#x5316;&#x3067;&#x304d;&#x308b;&#x30b3;&#x30f3;&#x30c6;&#x30f3;&#x30c4;&#x30fb;&#x4f53;&#x9a13;&#x30fb;&#x30b3;&#x30df;&#x30e5;&#x30cb;&#x30c6;&#x30a3;&#x306e;&#x4ed5;&#x7d44;&#x307f;</strong>&#x304c;&#x7406;&#x60f3;&#x3002;</p>
-          <p>&#x8fb2;&#x696d;&#x3068;&#x30d5;&#x30a3;&#x30fc;&#x30eb;&#x30c9;&#x30ef;&#x30fc;&#x30af;&#x306f;&#x3001;&#x300c;&#x305d;&#x308c;&#x81ea;&#x4f53;&#x304c;&#x30b3;&#x30f3;&#x30c6;&#x30f3;&#x30c4;&#x306b;&#x306a;&#x308b;&#x300d;&#x3068;&#x3044;&#x3046;&#x70b9;&#x3067;&#x4ed6;&#x306e;&#x526f;&#x696d;&#x3088;&#x308a;&#x4ed8;&#x52a0;&#x4fa1;&#x5024;&#x304c;&#x9ad8;&#x3044;&#x3002;&#x8a18;&#x9332;&#x3059;&#x308b;&#x3053;&#x3068;&#x3001;&#x6559;&#x3048;&#x308b;&#x3053;&#x3068;&#x3001;&#x4f53;&#x9a13;&#x3092;&#x63d0;&#x4f9b;&#x3059;&#x308b;&#x3053;&#x3068;&#x304c;&#x3001;&#x3059;&#x3079;&#x3066;&#x8cc7;&#x7523;&#x306b;&#x306a;&#x308b;&#x3002;</p>
+          <p>&#x8fb2;&#x696d;&#x3068;&#x30d5;&#x30a3;&#x30fc;&#x30eb;&#x30c9;&#x30ef;&#x30fc;&#x30af;&#x306f;&#x3001;&#x300c;&#x305d;&#x308c;&#x81ea;&#x4f53;&#x304c;&#x30b3;&#x30f3;&#x30c6;&#x30f3;&#x30c4;&#x306b;&#x306a;&#x308b;&#x300d;&#x3068;&#x3044;&#x3046;&#x70b9;&#x3067;&#x4ed6;&#x306e;&#x526f;&#x696d;&#x3088;&#x308a;&#x4ed8;&#x52a0;&#x4fa1;&#x5024;&#x304c;&#x9ad8;&#x3044;&#x3002;&#x8a18;&#x9332;&#x30fb;&#x6559;&#x3048;&#x308b;&#x30fb;&#x4f53;&#x9a13;&#x63d0;&#x4f9b;&#x3001;&#x3059;&#x3079;&#x3066;&#x8cc7;&#x7523;&#x306b;&#x306a;&#x308b;&#x3002;</p>
+        </div>
+        <div class="income-compare">
+          <div class="income-panel">
+            <div class="income-panel__title" style="color:#b0392b">&#x30d5;&#x30ed;&#x30fc;&#x53ce;&#x5165;</div>
+            <div class="income-bars">
+              <div class="income-bar" style="height:85%;background:#e08080"></div>
+              <div class="income-bar" style="height:85%;background:#e08080"></div>
+              <div class="income-bar" style="height:85%;background:#e08080"></div>
+              <div class="income-bar" style="height:4%;background:#f0d0d0"></div>
+            </div>
+            <div class="income-note">&#x4f11;&#x6b62;&#x3059;&#x308b;&#x3068;&#x30bc;&#x30ed;&#x306b;</div>
+          </div>
+          <div class="income-panel">
+            <div class="income-panel__title" style="color:var(--score-v)">&#x30b9;&#x30c8;&#x30c3;&#x30af;&#x53ce;&#x5165;</div>
+            <div class="income-bars">
+              <div class="income-bar" style="height:18%;background:var(--score-v);opacity:0.45"></div>
+              <div class="income-bar" style="height:38%;background:var(--score-v);opacity:0.6"></div>
+              <div class="income-bar" style="height:62%;background:var(--score-v);opacity:0.8"></div>
+              <div class="income-bar" style="height:90%;background:var(--score-v)"></div>
+            </div>
+            <div class="income-note">&#x305f;&#x307e;&#x308b;&#x304b;&#x3089;&#x6b62;&#x307e;&#x3089;&#x306a;&#x3044;</div>
+          </div>
         </div>
       </div>
 
+      <!-- 03 -->
       <div class="premise-card premise-card--b">
         <div class="premise-card__num">03</div>
         <div class="premise-card__title">&#x5927;&#x304d;&#x306a;&#x6295;&#x8cc7;&#x306a;&#x3057;&#x306e;&#x30cb;&#x30c3;&#x30c1;&#x30d3;&#x30b8;&#x30cd;&#x30b9;</div>
@@ -185,6 +295,7 @@
         </div>
       </div>
 
+      <!-- 04 -->
       <div class="premise-card premise-card--e">
         <div class="premise-card__num">04</div>
         <div class="premise-card__title">&#x5730;&#x65b9;&#x30fb;&#x7530;&#x820e;&#x30fb;&#x9577;&#x671f;&#x306e;&#x512a;&#x4f4d;&#x6027;</div>
@@ -192,15 +303,73 @@
           <p>&#x90fd;&#x5e02;&#x306b;&#x4f4f;&#x3093;&#x3067;&#x3044;&#x308b;&#x4eba;&#x306b;&#x306f;&#x3067;&#x304d;&#x306a;&#x3044;&#x3053;&#x3068;&#x3092;&#x3001;&#x5730;&#x65b9;&#x306b;&#x4f4f;&#x3093;&#x3067;&#x3044;&#x308b;&#x304b;&#x3089;&#x3053;&#x305d;&#x3067;&#x304d;&#x308b;&#x3002;&#x6642;&#x9593;&#x304c;&#x304b;&#x304b;&#x308b;&#x3053;&#x3068;&#x3001;&#x6a19;&#x9ad8;&#x5dee;&#x3001;&#x81ea;&#x7136;&#x74b0;&#x5883;&#x3001;&#x843d;&#x3061;&#x8449;&#x3084;&#x6e67;&#x6c34;&#x3084;&#x653e;&#x68c4;&#x5730;&#x2026;&#x2026;&#x90fd;&#x5e02;&#x5708;&#x3067;&#x306f;&#x300c;&#x30b3;&#x30b9;&#x30c8;&#x300d;&#x304c;&#x304b;&#x304b;&#x308b;&#x3082;&#x306e;&#x304c;&#x3001;&#x81ea;&#x5206;&#x306e;&#x5468;&#x308a;&#x306b;&#x306f;&#x305f;&#x3060;&#x3042;&#x308b;&#x3002;</p>
           <p>&#x300c;&#x4e00;&#x767a;&#x9006;&#x8ee2;&#x3092;&#x72d9;&#x3046;&#x300d;&#x306e;&#x3067;&#x306f;&#x306a;&#x304f;&#x3001;<strong>&#x6bce;&#x5e74;&#x5c11;&#x3057;&#x305a;&#x3064;&#x4e95;&#x6238;&#x3092;&#x6398;&#x308a;&#x9032;&#x3081;&#x3001;&#x6570;&#x5e74;&#x5f8c;&#x306b;&#x81ea;&#x7136;&#x3068;&#x6d41;&#x308c;&#x3066;&#x3044;&#x308b;&#x72b6;&#x614b;&#x3092;&#x4f5c;&#x308b;</strong>&#x3002;&#x305d;&#x308c;&#x304c;&#x3053;&#x306e;&#x30c7;&#x30fc;&#x30bf;&#x30d9;&#x30fc;&#x30b9;&#x3067;&#x4eee;&#x8aac;&#x3092;&#x7ba1;&#x7406;&#x3057;&#x3001;&#x89b3;&#x5bdf;&#x3092;&#x7d9a;&#x3051;&#x3066;&#x3044;&#x308b;&#x7406;&#x7531;&#x3002;</p>
         </div>
+        <div class="resource-grid">
+          <div class="resource-item">
+            <div class="resource-item__icon">&#x1f342;</div>
+            <div class="resource-item__name">&#x843d;&#x3061;&#x8449;&#x30fb;&#x8150;&#x8449;&#x571f;</div>
+            <div class="resource-item__tag">&#x7121;&#x6599;&#x306e;&#x80a5;&#x6599;</div>
+          </div>
+          <div class="resource-item">
+            <div class="resource-item__icon">&#x1f4a7;</div>
+            <div class="resource-item__name">&#x6e67;&#x6c34;&#x30fb;&#x5c71;&#x6c34;</div>
+            <div class="resource-item__tag">&#x7121;&#x6599;&#x306e;&#x6c34;&#x6e90;</div>
+          </div>
+          <div class="resource-item">
+            <div class="resource-item__icon">&#x26f0;&#xfe0f;</div>
+            <div class="resource-item__name">&#x6a19;&#x9ad8;&#x30fb;&#x6c17;&#x6e29;&#x5dee;</div>
+            <div class="resource-item__tag">&#x5e0c;&#x5c11;&#x6027;&#x306e;&#x6839;&#x62e0;</div>
+          </div>
+          <div class="resource-item">
+            <div class="resource-item__icon">&#x1f33f;</div>
+            <div class="resource-item__name">&#x653e;&#x68c4;&#x5730;&#x30fb;&#x8fb2;&#x5730;</div>
+            <div class="resource-item__tag">&#x4f4e;&#x30b3;&#x30b9;&#x30c8;</div>
+          </div>
+          <div class="resource-item">
+            <div class="resource-item__icon">&#x23f0;</div>
+            <div class="resource-item__name">&#x9759;&#x304b;&#x306a;&#x6642;&#x9593;</div>
+            <div class="resource-item__tag">&#x9577;&#x671f;&#x6295;&#x8cc7;&#x53ef;&#x80fd;</div>
+          </div>
+          <div class="resource-item">
+            <div class="resource-item__icon">&#x1f6ab;</div>
+            <div class="resource-item__name">&#x7af6;&#x5408;&#x53c2;&#x5165;&#x56f0;&#x96e3;</div>
+            <div class="resource-item__tag">&#x5730;&#x57df;&#x304c;&#x5b88;&#x308a;</div>
+          </div>
+        </div>
+        <div class="growth-timeline">
+          <div class="growth-timeline__title">&#x9577;&#x671f;&#x6210;&#x9577;&#x30a4;&#x30e1;&#x30fc;&#x30b8;</div>
+          <div class="growth-track">
+            <div class="growth-bar" style="height:12%;opacity:0.3"></div>
+            <div class="growth-bar" style="height:18%;opacity:0.35"></div>
+            <div class="growth-bar" style="height:26%;opacity:0.45"></div>
+            <div class="growth-bar" style="height:36%;opacity:0.55"></div>
+            <div class="growth-bar" style="height:50%;opacity:0.65"></div>
+            <div class="growth-bar" style="height:64%;opacity:0.75"></div>
+            <div class="growth-bar" style="height:80%;opacity:0.88"></div>
+            <div class="growth-bar" style="height:97%;opacity:1"></div>
+          </div>
+          <div class="growth-labels">
+            <span class="growth-label">1&#x5e74;</span>
+            <span class="growth-label">2&#x5e74;</span>
+            <span class="growth-label">3&#x5e74;</span>
+            <span class="growth-label">4&#x5e74;</span>
+            <span class="growth-label">5&#x5e74;</span>
+            <span class="growth-label">6&#x5e74;</span>
+            <span class="growth-label">8&#x5e74;</span>
+            <span class="growth-label">10&#x5e74;</span>
+          </div>
+          <div class="growth-phases">
+            <div class="growth-phase"><span>&#x4eee;&#x8aac;&#x7acb;&#x3066;</span>&#x89b3;&#x5bdf;&#x30fb;&#x5b9f;&#x9a13;</div>
+            <div class="growth-phase"><span>&#x5c0f;&#x3055;&#x306a;&#x5b9f;&#x7e3e;</span>&#x5c11;&#x3057;&#x305a;&#x3064;&#x53ce;&#x76ca;</div>
+            <div class="growth-phase"><span>&#x4ed5;&#x7d44;&#x307f;&#x5316;</span>&#x81ea;&#x7136;&#x306b;&#x6d41;&#x308c;&#x308b;</div>
+          </div>
+        </div>
       </div>
 
     </div>
   </div>
 
   <div class="section">
-    <div class="section__header">
-      <span class="section__title">&#x3084;&#x308b;&#x30fb;&#x3084;&#x3089;&#x306a;&#x3044;&#x306e;&#x5206;&#x304b;&#x308c;&#x76ee;</span>
-    </div>
+    <div class="section__header"><span class="section__title">&#x3084;&#x308b;&#x30fb;&#x3084;&#x3089;&#x306a;&#x3044;&#x306e;&#x5206;&#x304b;&#x308c;&#x76ee;</span></div>
     <div class="mindset-grid">
       <div class="mindset-item">
         <div class="mindset-item__label">&#x6295;&#x8cc7;&#x898f;&#x6a21;</div>
@@ -236,9 +405,7 @@
   </div>
 
   <div class="section">
-    <div class="section__header">
-      <span class="section__title">&#x3053;&#x306e;DB&#x306e;&#x4f7f;&#x3044;&#x65b9;</span>
-    </div>
+    <div class="section__header"><span class="section__title">&#x3053;&#x306e;DB&#x306e;&#x4f7f;&#x3044;&#x65b9;</span></div>
     <div class="premise-card premise-card--v">
       <div class="premise-card__body">
         <p><strong>(1) &#x4eee;&#x8aac;&#x3092;&#x7acb;&#x3066;&#x308b;</strong> &mdash; &#x300c;&#x3053;&#x308c;&#x306f;&#x30b9;&#x30c8;&#x30c3;&#x30af;&#x8cc7;&#x7523;&#x306b;&#x306a;&#x308b;&#x304b;&#xff1f;&#x300d;&#x3092;&#x4eee;&#x8aac;&#x3068;&#x3057;&#x3066;&#x767b;&#x9332;&#x3059;&#x308b;&#x3002;</p>
